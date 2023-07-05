@@ -11,15 +11,18 @@ enum CharacterWebAPIRepositoryError: Error {
     case invalidURL
 }
 
-struct CharacterWebAPIRepository: CharacterRepository {
+class CharacterWebAPIRepository: CharacterRepository {
     
-    func getCharacters(forPage page: Int) async throws -> [Character] {
+    private var characters = [Character]()
+    
+    func getCharacters(untilPage page: Int) async throws -> [Character] {
         guard let url = URL(string: "\(CharacterWebAPIConstants.baseURL)\(CharacterWebAPIConstants.path)\(page)") else {
             throw CharacterWebAPIRepositoryError.invalidURL
         }
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(CharacterListWebAPIResponse.self, from: data)
-        return response.results.map { return Character(webAPIResult: $0) }
+        characters.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
+        return characters
     }
 }
 

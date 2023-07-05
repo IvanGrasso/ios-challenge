@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 protocol CharacterCollectionViewControllerDelegate: AnyObject {
+    func didScrollToLastItem()
     func didSelect(_ item: Character)
 }
 
@@ -54,12 +55,14 @@ class CharacterCollectionViewController: UICollectionViewController {
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard indexPath.item == items.count - 1 else { return }
+        delegate?.didScrollToLastItem()
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        guard let item = dataSource.itemIdentifier(for: indexPath) else {
-            collectionView.deselectItem(at: indexPath, animated: true)
-            return
-        }
+        guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
         delegate?.didSelect(item)
     }
 }

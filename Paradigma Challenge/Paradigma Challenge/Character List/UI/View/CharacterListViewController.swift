@@ -90,6 +90,10 @@ final class CharacterListViewController: UIViewController, CharacterListView {
 }
 
 extension CharacterListViewController: CharacterCollectionViewControllerDelegate {
+    func didScrollToLastItem() {
+        presenter.didScrollToLastItem()
+    }
+    
     func didSelect(_ item: Character) {
         
     }
