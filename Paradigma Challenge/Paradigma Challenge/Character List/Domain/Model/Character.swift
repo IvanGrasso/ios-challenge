@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Character {
+struct Character: Hashable, Identifiable {
     let id: Int
     let name: String
     let status: String
