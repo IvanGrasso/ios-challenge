@@ -13,6 +13,6 @@ struct Character: Hashable, Identifiable {
     let status: String
     let species: String
     let gender: String
-    let origin: CharacterLocation
-    let location: CharacterLocation
+    let origin: CharacterLocation?
+    let location: CharacterLocation?
 }

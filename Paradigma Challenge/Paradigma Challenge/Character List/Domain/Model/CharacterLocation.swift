@@ -9,5 +9,5 @@ import Foundation
 
 struct CharacterLocation: Hashable {
     let name: String
-    let url: String
+    let id: String
 }

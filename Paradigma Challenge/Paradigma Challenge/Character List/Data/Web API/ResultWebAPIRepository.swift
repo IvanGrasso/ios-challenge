@@ -13,7 +13,7 @@ enum ResultWebAPIRepositoryError: Error {
 
 class ResultWebAPIRepository: ResultRepository {
     
-    private var characters = [Character]()
+    private var results = [Character]()
     
     func getResults(untilPage page: Int) async throws -> [Character] {
         guard let url = URL(string: "\(ResultWebAPIConstants.baseURL)\(ResultWebAPIConstants.path)\(page)") else {
@@ -21,8 +21,8 @@ class ResultWebAPIRepository: ResultRepository {
         }
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(ResultWebAPIResponse.self, from: data)
-        characters.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
-        return characters
+        results.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
+        return results
     }
     
     func getFavorites() async throws -> [Character] {
@@ -43,8 +43,10 @@ private extension Character {
 }
 
 private extension CharacterLocation {
-    init(webAPILocation: ResultWebAPILocation) {
+    init?(webAPILocation: ResultWebAPILocation) {
+        guard let range = webAPILocation.url.range(of: "/location/") else { return nil }
+        let locationID = webAPILocation.url[range.upperBound...]
         self.name = webAPILocation.name
-        self.url = webAPILocation.url
+        self.id = String(locationID)
     }
 }
