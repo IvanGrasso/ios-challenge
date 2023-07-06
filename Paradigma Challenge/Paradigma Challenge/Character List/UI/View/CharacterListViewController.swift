@@ -9,16 +9,11 @@ import Foundation
 import UIKit
 
 protocol CharacterListView: AnyObject {
-    func update(with viewData: CharacterListViewData)
+    func setUp(withLists lists: [CharacterList])
+    func update(with items: [Character])
     func showActivityIndicator()
     func hideActivityIndicator()
     func showErrorMessage(_ message: String)
-}
-
-struct CharacterListViewData {
-    let sectionTitles: [String]
-    let selectedSectionIndex: Int
-    let items: [Character]
 }
 
 final class CharacterListViewController: UIViewController, CharacterListView {
@@ -26,8 +21,7 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     private var presenter: CharacterListPresenting
     
     private let segmentedControl = UISegmentedControl()
-    private var collectionViewControllers = [CharacterCollectionViewController]()
-    private var selectedCollectionViewController: CharacterCollectionViewController?
+    private var collectionViewController = CharacterCollectionViewController()
     
     init(presenter: CharacterListPresenting = CharacterListPresenter()) {
         self.presenter = presenter
@@ -42,38 +36,32 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.viewDidLoad()
-        view.backgroundColor = UIColor.purple
-    }
-    
-    func update(with viewData: CharacterListViewData) {
-        segmentedControl.removeAllSegments()
-        viewData.sectionTitles.enumerated().forEach { index, sectionTitle in
-            let handler: UIActionHandler = { [weak self] action in
-                guard let selectedSectionIndex = self?.segmentedControl.selectedSegmentIndex else { return }
-                self?.presenter.didSelect(sectionWithIndex: selectedSectionIndex)
-            }
-            let action = UIAction(title: sectionTitle, handler: handler)
-            segmentedControl.insertSegment(action: action, at: index, animated: false)
-            
-            let collectionViewController = CharacterCollectionViewController(collectionViewLayout: UICollectionViewLayout())
-            collectionViewControllers.append(collectionViewController)
-            addChild(collectionViewController)
-            collectionViewController.didMove(toParent: self)
-            collectionViewController.delegate = self
-        }
-        navigationItem.titleView = segmentedControl
-        segmentedControl.selectedSegmentIndex = viewData.selectedSectionIndex
-        let selectedViewController = collectionViewControllers[segmentedControl.selectedSegmentIndex]
-        show(selectedViewController)
-        selectedViewController.items = viewData.items
-    }
-    
-    private func show(_ collectionViewController: CharacterCollectionViewController) {
-        selectedCollectionViewController?.view.removeFromSuperview()
+        
+        addChild(collectionViewController)
+        collectionViewController.delegate = self
         view.addSubview(collectionViewController.view)
         collectionViewController.view.pinToSuperview()
-        selectedCollectionViewController = collectionViewController
+        
+        presenter.viewDidLoad()
+    }
+    
+    func setUp(withLists lists: [CharacterList]) {
+        guard !lists.isEmpty else { return }
+        segmentedControl.removeAllSegments()
+        navigationItem.titleView = segmentedControl
+        lists.enumerated().forEach { index, list in
+            let handler: UIActionHandler = { [weak self] _ in
+                self?.presenter.didSelect(list: list)
+            }
+            let action = UIAction(title: list.rawValue, handler: handler)
+            segmentedControl.insertSegment(action: action, at: index, animated: false)
+        }
+        segmentedControl.selectedSegmentIndex = 0
+        presenter.didSelect(list: lists.first!)
+    }
+    
+    func update(with items: [Character]) {
+        collectionViewController.items = items
     }
     
     func showActivityIndicator() {

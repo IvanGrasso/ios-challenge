@@ -24,6 +24,10 @@ class CharacterWebAPIRepository: CharacterRepository {
         characters.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
         return characters
     }
+    
+    func getFavorites() async throws -> [Character] {
+        return []
+    }
 }
 
 private extension Character {

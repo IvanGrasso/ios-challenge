@@ -9,4 +9,5 @@ import Foundation
 
 protocol CharacterRepository {
     func getCharacters(untilPage page: Int) async throws -> [Character]
+    func getFavorites() async throws -> [Character]
 }
