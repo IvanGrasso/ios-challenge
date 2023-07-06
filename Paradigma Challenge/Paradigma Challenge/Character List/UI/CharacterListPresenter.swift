@@ -15,53 +15,57 @@ protocol CharacterListPresenting {
 }
 
 enum CharacterList: String {
-    case all
+    case results
     case favorites
 }
 
 final class CharacterListPresenter: CharacterListPresenting {
     
     weak var view: CharacterListView?
-    private let repository: CharacterRepository
+    
+    private let resultRepository: ResultRepository
+    private let favoritesRepository: FavoritesRepository
     
     private var selectedList: CharacterList?
-    private var currentPage = 1
+    private var resultsCurrentPage = 1
     
-    init(repository: CharacterRepository = CharacterWebAPIRepository()) {
-        self.repository = repository
+    init(resultRepository: ResultRepository = ResultWebAPIRepository(),
+         favoritesRepository: FavoritesRepository = FavoritesLocalRepository()) {
+        self.resultRepository = resultRepository
+        self.favoritesRepository = favoritesRepository
     }
     
     func viewDidLoad() {
-        view?.setUp(withLists: [.all, .favorites])
+        view?.setUp(withLists: [.results, .favorites])
     }
     
     func didScrollToLastItem() {
-        guard selectedList == .all else { return }
-        currentPage += 1
+        guard selectedList == .results else { return }
+        resultsCurrentPage += 1
         Task.init {
-            await loadCharacters(untilPage: currentPage)
+            await loadResults(untilPage: resultsCurrentPage)
         }
     }
     
     func didSelect(list: CharacterList) {
-        selectedList = list
         switch list {
-        case .all:
+        case .results:
             Task.init {
-                await loadCharacters(untilPage: currentPage)
+                await loadResults(untilPage: resultsCurrentPage)
             }
         case .favorites:
             Task.init {
                 await loadFavorites()
             }
         }
+        selectedList = list
     }
     
-    private func loadCharacters(untilPage page: Int) async {
+    private func loadResults(untilPage page: Int) async {
         do {
-            let characters = try await repository.getCharacters(untilPage: currentPage)
+            let results = try await resultRepository.getResults(untilPage: resultsCurrentPage)
             await MainActor.run {
-                view?.update(with: characters)
+                view?.update(with: results)
             }
         } catch {
             // TODO: Handle error
@@ -70,9 +74,9 @@ final class CharacterListPresenter: CharacterListPresenting {
     
     private func loadFavorites() async {
         do {
-            let characters = try await repository.getFavorites()
+            let favorites = try await favoritesRepository.getFavorites()
             await MainActor.run {
-                view?.update(with: characters)
+                view?.update(with: favorites)
             }
         } catch {
             // TODO: Handle error

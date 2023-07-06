@@ -1,5 +1,5 @@
 //
-//  CharacterWebAPIRepository.swift
+//  ResultWebAPIRepository.swift
 //  Paradigma Challenge
 //
 //  Created by Ivan Grasso on 7/3/23.
@@ -7,20 +7,20 @@
 
 import Foundation
 
-enum CharacterWebAPIRepositoryError: Error {
+enum ResultWebAPIRepositoryError: Error {
     case invalidURL
 }
 
-class CharacterWebAPIRepository: CharacterRepository {
+class ResultWebAPIRepository: ResultRepository {
     
     private var characters = [Character]()
     
-    func getCharacters(untilPage page: Int) async throws -> [Character] {
-        guard let url = URL(string: "\(CharacterWebAPIConstants.baseURL)\(CharacterWebAPIConstants.path)\(page)") else {
-            throw CharacterWebAPIRepositoryError.invalidURL
+    func getResults(untilPage page: Int) async throws -> [Character] {
+        guard let url = URL(string: "\(ResultWebAPIConstants.baseURL)\(ResultWebAPIConstants.path)\(page)") else {
+            throw ResultWebAPIRepositoryError.invalidURL
         }
         let (data, _) = try await URLSession.shared.data(from: url)
-        let response = try JSONDecoder().decode(CharacterListWebAPIResponse.self, from: data)
+        let response = try JSONDecoder().decode(ResultWebAPIResponse.self, from: data)
         characters.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
         return characters
     }
@@ -31,7 +31,7 @@ class CharacterWebAPIRepository: CharacterRepository {
 }
 
 private extension Character {
-    init(webAPIResult: CharacterWebAPIResult) {
+    init(webAPIResult: WebAPIResult) {
         self.id = webAPIResult.id
         self.name = webAPIResult.name
         self.status = webAPIResult.status
@@ -43,7 +43,7 @@ private extension Character {
 }
 
 private extension CharacterLocation {
-    init(webAPILocation: CharacterWebAPILocation) {
+    init(webAPILocation: ResultWebAPILocation) {
         self.name = webAPILocation.name
         self.url = webAPILocation.url
     }
