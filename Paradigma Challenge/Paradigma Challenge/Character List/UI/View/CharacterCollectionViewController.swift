@@ -52,4 +52,9 @@ class CharacterCollectionViewController: UITableViewController {
             delegate?.didScrollToLastItem()
         }
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = items[indexPath.row]
+        delegate?.didSelect(item)
+    }
 }

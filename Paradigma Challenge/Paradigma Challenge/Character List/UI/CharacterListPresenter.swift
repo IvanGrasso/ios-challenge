@@ -12,6 +12,7 @@ protocol CharacterListPresenting {
     func viewDidLoad()
     func didScrollToLastItem()
     func didSelect(list: CharacterList)
+    func didSelect(_ item: Character)
 }
 
 enum CharacterList: String {
@@ -59,6 +60,10 @@ final class CharacterListPresenter: CharacterListPresenting {
             }
         }
         selectedList = list
+    }
+    
+    func didSelect(_ item: Character) {
+        view?.navigateToDetailView(for: item.location)
     }
     
     private func loadResults(untilPage page: Int) async {

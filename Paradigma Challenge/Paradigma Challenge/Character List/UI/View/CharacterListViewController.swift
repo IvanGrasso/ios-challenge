@@ -11,6 +11,7 @@ import UIKit
 protocol CharacterListView: AnyObject {
     func setUp(withLists lists: [CharacterList])
     func update(with items: [Character])
+    func navigateToDetailView(for location: CharacterLocation?)
     func showActivityIndicator()
     func hideActivityIndicator()
     func showErrorMessage(_ message: String)
@@ -64,6 +65,12 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         collectionViewController.items = items
     }
     
+    func navigateToDetailView(for location: CharacterLocation?) {
+        let detailPresenter = CharacterLocationDetailPresenter(locationID: location?.id)
+        let detailView = CharacterLocationDetailViewController(presenter: detailPresenter)
+        navigationController?.pushViewController(detailView, animated: true)
+    }
+    
     func showActivityIndicator() {
         
     }
@@ -83,6 +90,6 @@ extension CharacterListViewController: CharacterCollectionViewControllerDelegate
     }
     
     func didSelect(_ item: Character) {
-        
+        presenter.didSelect(item)
     }
 }

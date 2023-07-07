@@ -29,6 +29,13 @@
 		2D6742322A55B1D300FFF576 /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742312A55B1D300FFF576 /* UIView+Utils.swift */; };
 		2D6742342A57517E00FFF576 /* FavoritesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742332A57517E00FFF576 /* FavoritesRepository.swift */; };
 		2D6742372A5751E200FFF576 /* FavoritesLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742362A5751E200FFF576 /* FavoritesLocalRepository.swift */; };
+		2D67423B2A58494700FFF576 /* LocationDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67423A2A58494700FFF576 /* LocationDetail.swift */; };
+		2D67423E2A584A9100FFF576 /* LocationDetailRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67423D2A584A9100FFF576 /* LocationDetailRepository.swift */; };
+		2D6742432A584CE500FFF576 /* LocationDetailWebAPIRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742422A584CE500FFF576 /* LocationDetailWebAPIRepository.swift */; };
+		2D6742462A584D9000FFF576 /* WebAPILocationDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742452A584D9000FFF576 /* WebAPILocationDetail.swift */; };
+		2D6742482A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742472A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift */; };
+		2D67424C2A58513100FFF576 /* CharacterLocationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67424B2A58513100FFF576 /* CharacterLocationDetailViewController.swift */; };
+		2D67424E2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67424D2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +82,13 @@
 		2D6742312A55B1D300FFF576 /* UIView+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Utils.swift"; sourceTree = "<group>"; };
 		2D6742332A57517E00FFF576 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
 		2D6742362A5751E200FFF576 /* FavoritesLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesLocalRepository.swift; sourceTree = "<group>"; };
+		2D67423A2A58494700FFF576 /* LocationDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetail.swift; sourceTree = "<group>"; };
+		2D67423D2A584A9100FFF576 /* LocationDetailRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailRepository.swift; sourceTree = "<group>"; };
+		2D6742422A584CE500FFF576 /* LocationDetailWebAPIRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailWebAPIRepository.swift; sourceTree = "<group>"; };
+		2D6742452A584D9000FFF576 /* WebAPILocationDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAPILocationDetail.swift; sourceTree = "<group>"; };
+		2D6742472A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailWebAPIConstants.swift; sourceTree = "<group>"; };
+		2D67424B2A58513100FFF576 /* CharacterLocationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterLocationDetailViewController.swift; sourceTree = "<group>"; };
+		2D67424D2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterLocationDetailPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +146,7 @@
 				2D6741EC2A5358B400FFF576 /* LaunchScreen.storyboard */,
 				2D6741EF2A5358B400FFF576 /* Info.plist */,
 				2D6742112A53593200FFF576 /* Character List */,
+				2D6742382A5848E200FFF576 /* Character Location Detail */,
 				2D6742302A55B1BC00FFF576 /* Utils */,
 			);
 			path = "Paradigma Challenge";
@@ -178,7 +193,7 @@
 			children = (
 				2D6742242A54629D00FFF576 /* ResultWebAPIConstants.swift */,
 				2D6742152A5360C100FFF576 /* ResultWebAPIRepository.swift */,
-				2D6742202A54597000FFF576 /* Entities */,
+				2D6742202A54597000FFF576 /* Model */,
 			);
 			path = "Web API";
 			sourceTree = "<group>";
@@ -186,29 +201,29 @@
 		2D67421C2A5451DA00FFF576 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				2D67421F2A5451EE00FFF576 /* Entities */,
 				2D6742212A545A6800FFF576 /* Repository */,
-				2D67421F2A5451EE00FFF576 /* Model */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
 		};
-		2D67421F2A5451EE00FFF576 /* Model */ = {
+		2D67421F2A5451EE00FFF576 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
 				2D67421D2A5451E900FFF576 /* Character.swift */,
 				2D6742262A54657400FFF576 /* CharacterLocation.swift */,
 			);
-			path = Model;
+			path = Entities;
 			sourceTree = "<group>";
 		};
-		2D6742202A54597000FFF576 /* Entities */ = {
+		2D6742202A54597000FFF576 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				2D6742132A535A4200FFF576 /* ResultWebAPIResponse.swift */,
 				2D6742182A53636F00FFF576 /* WebAPIResult.swift */,
 				2D67421A2A54500B00FFF576 /* ResultWebAPILocation.swift */,
 			);
-			path = Entities;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		2D6742212A545A6800FFF576 /* Repository */ = {
@@ -252,6 +267,76 @@
 				2D6742362A5751E200FFF576 /* FavoritesLocalRepository.swift */,
 			);
 			path = Local;
+			sourceTree = "<group>";
+		};
+		2D6742382A5848E200FFF576 /* Character Location Detail */ = {
+			isa = PBXGroup;
+			children = (
+				2D67424A2A584E8C00FFF576 /* UI */,
+				2D6742392A58492B00FFF576 /* Domain */,
+				2D6742492A584E8200FFF576 /* Data */,
+			);
+			path = "Character Location Detail";
+			sourceTree = "<group>";
+		};
+		2D6742392A58492B00FFF576 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				2D67423F2A584B2800FFF576 /* Entities */,
+				2D67423C2A584A7E00FFF576 /* Repository */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		2D67423C2A584A7E00FFF576 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				2D67423D2A584A9100FFF576 /* LocationDetailRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		2D67423F2A584B2800FFF576 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				2D67423A2A58494700FFF576 /* LocationDetail.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		2D6742402A584CC100FFF576 /* Web API */ = {
+			isa = PBXGroup;
+			children = (
+				2D6742472A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift */,
+				2D6742422A584CE500FFF576 /* LocationDetailWebAPIRepository.swift */,
+				2D6742442A584D4900FFF576 /* Model */,
+			);
+			path = "Web API";
+			sourceTree = "<group>";
+		};
+		2D6742442A584D4900FFF576 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2D6742452A584D9000FFF576 /* WebAPILocationDetail.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2D6742492A584E8200FFF576 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				2D6742402A584CC100FFF576 /* Web API */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		2D67424A2A584E8C00FFF576 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				2D67424B2A58513100FFF576 /* CharacterLocationDetailViewController.swift */,
+				2D67424D2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -390,10 +475,15 @@
 				2D6742322A55B1D300FFF576 /* UIView+Utils.swift in Sources */,
 				2D6742272A54657400FFF576 /* CharacterLocation.swift in Sources */,
 				2D6742342A57517E00FFF576 /* FavoritesRepository.swift in Sources */,
+				2D6742462A584D9000FFF576 /* WebAPILocationDetail.swift in Sources */,
+				2D67424C2A58513100FFF576 /* CharacterLocationDetailViewController.swift in Sources */,
 				2D6742232A545A8E00FFF576 /* ResultRepository.swift in Sources */,
 				2D6741E22A5358B300FFF576 /* AppDelegate.swift in Sources */,
 				2D6742372A5751E200FFF576 /* FavoritesLocalRepository.swift in Sources */,
+				2D6742482A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift in Sources */,
+				2D67424E2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift in Sources */,
 				2D67422D2A54947C00FFF576 /* CharacterCollectionViewController.swift in Sources */,
+				2D67423B2A58494700FFF576 /* LocationDetail.swift in Sources */,
 				2D6742142A535A4200FFF576 /* ResultWebAPIResponse.swift in Sources */,
 				2D6742252A54629D00FFF576 /* ResultWebAPIConstants.swift in Sources */,
 				2D6741E42A5358B300FFF576 /* SceneDelegate.swift in Sources */,
@@ -401,6 +491,8 @@
 				2D6742162A5360C100FFF576 /* ResultWebAPIRepository.swift in Sources */,
 				2D67421E2A5451E900FFF576 /* Character.swift in Sources */,
 				2D67422A2A548FCD00FFF576 /* CharacterListViewController.swift in Sources */,
+				2D6742432A584CE500FFF576 /* LocationDetailWebAPIRepository.swift in Sources */,
+				2D67423E2A584A9100FFF576 /* LocationDetailRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
