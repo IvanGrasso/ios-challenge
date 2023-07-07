@@ -16,7 +16,7 @@ protocol CharacterListPresenting {
 }
 
 enum CharacterList: String {
-    case results
+    case results = "All"
     case favorites
 }
 

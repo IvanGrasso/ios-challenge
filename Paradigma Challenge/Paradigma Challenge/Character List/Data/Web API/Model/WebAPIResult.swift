@@ -15,4 +15,5 @@ struct WebAPIResult: Decodable {
     let gender: String
     let origin: ResultWebAPILocation
     let location: ResultWebAPILocation
+    let image: String
 }

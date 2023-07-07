@@ -26,7 +26,7 @@ class CharacterCollectionViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DefaultCell")
+        tableView.register(CharacterCell.self, forCellReuseIdentifier: "DefaultCell")
         
         tableView.tableFooterView = {
             let spinner = UIActivityIndicatorView(style: .medium)
@@ -34,6 +34,8 @@ class CharacterCollectionViewController: UITableViewController {
             spinner.startAnimating()
             return spinner
         }()
+        
+        tableView.showsVerticalScrollIndicator = false
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -41,9 +43,9 @@ class CharacterCollectionViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath) as? CharacterCell else { return UITableViewCell() }
         let character = items[indexPath.row]
-        cell.textLabel?.text = character.name
+        cell.character = character
         return cell
     }
     

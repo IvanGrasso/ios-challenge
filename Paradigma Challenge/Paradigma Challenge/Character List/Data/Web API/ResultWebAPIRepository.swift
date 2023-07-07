@@ -39,6 +39,7 @@ private extension Character {
         self.gender = webAPIResult.gender
         self.origin = CharacterLocation(webAPILocation: webAPIResult.origin)
         self.location = CharacterLocation(webAPILocation: webAPIResult.location)
+        self.image = webAPIResult.image
     }
 }
 

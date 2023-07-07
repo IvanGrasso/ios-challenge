@@ -36,6 +36,8 @@
 		2D6742482A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742472A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift */; };
 		2D67424C2A58513100FFF576 /* CharacterLocationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67424B2A58513100FFF576 /* CharacterLocationDetailViewController.swift */; };
 		2D67424E2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67424D2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift */; };
+		2D6742502A58620F00FFF576 /* CharacterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67424F2A58620F00FFF576 /* CharacterCell.swift */; };
+		2D6742532A58685D00FFF576 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742522A58685D00FFF576 /* ImageCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +91,8 @@
 		2D6742472A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailWebAPIConstants.swift; sourceTree = "<group>"; };
 		2D67424B2A58513100FFF576 /* CharacterLocationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterLocationDetailViewController.swift; sourceTree = "<group>"; };
 		2D67424D2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterLocationDetailPresenter.swift; sourceTree = "<group>"; };
+		2D67424F2A58620F00FFF576 /* CharacterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterCell.swift; sourceTree = "<group>"; };
+		2D6742522A58685D00FFF576 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -249,6 +253,7 @@
 			children = (
 				2D6742292A548FCD00FFF576 /* CharacterListViewController.swift */,
 				2D67422C2A54947C00FFF576 /* CharacterCollectionViewController.swift */,
+				2D67424F2A58620F00FFF576 /* CharacterCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -256,6 +261,7 @@
 		2D6742302A55B1BC00FFF576 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2D6742522A58685D00FFF576 /* ImageCache.swift */,
 				2D6742312A55B1D300FFF576 /* UIView+Utils.swift */,
 			);
 			path = Utils;
@@ -473,12 +479,14 @@
 				2D6742192A53636F00FFF576 /* WebAPIResult.swift in Sources */,
 				2D67422F2A54952A00FFF576 /* CharacterListPresenter.swift in Sources */,
 				2D6742322A55B1D300FFF576 /* UIView+Utils.swift in Sources */,
+				2D6742502A58620F00FFF576 /* CharacterCell.swift in Sources */,
 				2D6742272A54657400FFF576 /* CharacterLocation.swift in Sources */,
 				2D6742342A57517E00FFF576 /* FavoritesRepository.swift in Sources */,
 				2D6742462A584D9000FFF576 /* WebAPILocationDetail.swift in Sources */,
 				2D67424C2A58513100FFF576 /* CharacterLocationDetailViewController.swift in Sources */,
 				2D6742232A545A8E00FFF576 /* ResultRepository.swift in Sources */,
 				2D6741E22A5358B300FFF576 /* AppDelegate.swift in Sources */,
+				2D6742532A58685D00FFF576 /* ImageCache.swift in Sources */,
 				2D6742372A5751E200FFF576 /* FavoritesLocalRepository.swift in Sources */,
 				2D6742482A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift in Sources */,
 				2D67424E2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift in Sources */,

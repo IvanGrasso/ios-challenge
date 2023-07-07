@@ -15,4 +15,5 @@ struct Character: Hashable, Identifiable {
     let gender: String
     let origin: CharacterLocation?
     let location: CharacterLocation?
+    let image: String
 }
