@@ -10,11 +10,7 @@ import UIKit
 
 final class CharacterCell: UITableViewCell {
     
-    var character: Character? {
-        didSet {
-            updateLayout()
-        }
-    }
+    private var imageTask: Cancellable?
     
     private var mainStackView: UIStackView = {
         let stack = UIStackView()
@@ -38,6 +34,7 @@ final class CharacterCell: UITableViewCell {
         imageView.layer.cornerRadius = 4
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.image = UIImage(named: "image-placeholder")
         return imageView
     }()
     
@@ -78,6 +75,12 @@ final class CharacterCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        portraitImageView.image = UIImage(named: "image-placeholder")
+        imageTask?.cancel()
+    }
+    
     private func setUpLayout() {
         addSubview(mainStackView)
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -98,9 +101,7 @@ final class CharacterCell: UITableViewCell {
         labelStackView.addArrangedSubview(originLabel)
     }
     
-    private func updateLayout() {
-        guard let character = character else { return }
-        portraitImageView.image = UIImage(named: "image-placeholder")
+    func configure(with character: Character, imageCache: ImageCache) {
         titleLabel.text = character.name
         
         let statusIndicator = character.status == "Alive" ? "🟢" : "🔴"
@@ -109,7 +110,7 @@ final class CharacterCell: UITableViewCell {
         
         originTitleLabel.text = "First seen in:"
         originLabel.text = "\(character.origin?.name ?? "Unknown")"
-        ImageCache.shared.loadImage(with: character.image) { [weak self] image in
+        imageTask = try? imageCache.loadImage(withURL: character.image) { [weak self] image in
             self?.portraitImageView.image = image
         }
     }

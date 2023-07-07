@@ -8,47 +8,64 @@
 import Foundation
 import UIKit
 
+protocol Cancellable {
+    func cancel()
+}
+
+extension URLSessionDataTask: Cancellable { }
+
+enum ImageCacheError: Error {
+    case invalidURL
+}
+
 final class ImageCache {
     
-    static let shared = ImageCache()
-    
-    private let imageCache = NSCache<NSURL, UIImage>()
-    
-    func loadImage(with urlString: String, completion: @escaping (UIImage?) -> Void) {
-        guard let url = NSURL(string: urlString) else {
-            DispatchQueue.main.async {
-                let placeholder = UIImage(named: "image-placeholder")
-                completion(placeholder)
-            }
-            return
-        }
-        
-        if let cachedImage = cachedImage(for: url) {
-            DispatchQueue.main.async {
-                completion(cachedImage)
-            }
-            return
-        }
-
-        URLSession.shared.dataTask(with: url as URL) { (data, response, error) in
-            guard let responseData = data, let image = UIImage(data: responseData),
-                    error == nil else {
-                DispatchQueue.main.async {
-                    let placeholder = UIImage(named: "image-placeholder")
-                    completion(placeholder)
-                }
-                return
-            }
-            
-            self.imageCache.setObject(image, forKey: url, cost: responseData.count)
-            
-            DispatchQueue.main.async {
-                completion(image)
-            }
-        }.resume()
+    private struct CachedImage {
+        let url: URL
+        let data: Data
     }
     
-    private func cachedImage(for url: NSURL) -> UIImage? {
-        return imageCache.object(forKey: url)
+    private struct CachedRequest: Cancellable {
+        func cancel() { }
+    }
+    
+    private var cache: [CachedImage] = []
+    
+    func loadImage(withURL urlString: String, completion: @escaping (UIImage?) -> Void) throws -> Cancellable {
+        guard let url = URL(string: urlString) else { throw ImageCacheError.invalidURL }
+        
+        if let image = cachedImage(for: url) {
+            completion(image)
+            return CachedRequest()
+        }
+        
+        let dataTask: URLSessionDataTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+            var image: UIImage? = UIImage(named: "image-placeholder")
+            defer {
+                DispatchQueue.main.async {
+                    completion(image)
+                }
+            }
+            if let data = data {
+                image = UIImage(data: data)
+                self?.cacheImage(data, for: url)
+            }
+        }
+        
+        dataTask.resume()
+        
+        return dataTask
+    }
+    
+    private func cacheImage(_ data: Data, for url: URL) {
+        let cachedImage = CachedImage(url: url, data: data)
+        cache.append(cachedImage)
+    }
+    
+    private func cachedImage(for url: URL) -> UIImage? {
+        guard let data = cache.first(where: { $0.url == url })?.data else {
+            return nil
+        }
+        return UIImage(data: data)
     }
 }

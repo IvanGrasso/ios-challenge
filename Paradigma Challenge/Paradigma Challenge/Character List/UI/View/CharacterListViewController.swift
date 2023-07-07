@@ -62,7 +62,7 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     }
     
     func update(with items: [Character]) {
-        collectionViewController.items = items
+        collectionViewController.items.append(contentsOf: items)
     }
     
     func navigateToDetailView(for location: CharacterLocation?) {

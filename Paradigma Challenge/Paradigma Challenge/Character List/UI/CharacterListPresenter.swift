@@ -68,7 +68,7 @@ final class CharacterListPresenter: CharacterListPresenting {
     
     private func loadResults(untilPage page: Int) async {
         do {
-            let results = try await resultRepository.getResults(untilPage: resultsCurrentPage)
+            let results = try await resultRepository.getResults(forPage: resultsCurrentPage)
             await MainActor.run {
                 view?.update(with: results)
             }

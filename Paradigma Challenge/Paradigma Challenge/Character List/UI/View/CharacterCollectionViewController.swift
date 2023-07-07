@@ -23,6 +23,8 @@ class CharacterCollectionViewController: UITableViewController {
         }
     }
     
+    private lazy var imageCache = ImageCache()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -45,7 +47,7 @@ class CharacterCollectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath) as? CharacterCell else { return UITableViewCell() }
         let character = items[indexPath.row]
-        cell.character = character
+        cell.configure(with: character, imageCache: imageCache)
         return cell
     }
     
