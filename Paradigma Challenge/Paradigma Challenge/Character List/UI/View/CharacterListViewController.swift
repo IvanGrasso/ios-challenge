@@ -10,7 +10,7 @@ import UIKit
 
 protocol CharacterListView: AnyObject {
     func setUp(withLists lists: [CharacterList])
-    func update(with items: [Character])
+    func update(with items: [Character], isPagingEnabled: Bool)
     func navigateToDetailView(for location: CharacterLocation?)
     func showActivityIndicator()
     func hideActivityIndicator()
@@ -61,8 +61,10 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         presenter.didSelect(list: lists.first!)
     }
     
-    func update(with items: [Character]) {
-        collectionViewController.items.append(contentsOf: items)
+    func update(with items: [Character],
+                isPagingEnabled: Bool) {
+        collectionViewController.items = items
+        collectionViewController.showsActivityFooter = isPagingEnabled
     }
     
     func navigateToDetailView(for location: CharacterLocation?) {
@@ -85,11 +87,16 @@ final class CharacterListViewController: UIViewController, CharacterListView {
 }
 
 extension CharacterListViewController: CharacterCollectionViewControllerDelegate {
+    
     func didScrollToLastItem() {
         presenter.didScrollToLastItem()
     }
     
     func didSelect(_ item: Character) {
         presenter.didSelect(item)
+    }
+    
+    func didMarkAsFavorite(_ item: Character) {
+        presenter.didMarkAsFavorite(item)
     }
 }

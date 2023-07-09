@@ -12,14 +12,17 @@ enum ResultWebAPIRepositoryError: Error {
 }
 
 class ResultWebAPIRepository: ResultRepository {
-        
-    func getResults(forPage page: Int) async throws -> [Character] {
+    
+    private var results = [Character]()
+    
+    func getResults(untilPage page: Int) async throws -> [Character] {
         guard let url = URL(string: "\(ResultWebAPIConstants.baseURL)\(ResultWebAPIConstants.path)\(page)") else {
             throw ResultWebAPIRepositoryError.invalidURL
         }
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(ResultWebAPIResponse.self, from: data)
-        return response.results.map { return Character(webAPIResult: $0) }
+        results.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
+        return results
     }
     
     func getFavorites() async throws -> [Character] {

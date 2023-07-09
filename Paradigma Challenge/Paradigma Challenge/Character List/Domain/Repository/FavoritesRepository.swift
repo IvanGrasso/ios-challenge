@@ -8,6 +8,7 @@
 import Foundation
 
 protocol FavoritesRepository {
-    func addFavorite(_ character: Character) async throws
     func getFavorites() async throws -> [Character]
+    func addFavorite(_ character: Character) async throws
+    func removeFarite(_ character: Character) async throws
 }

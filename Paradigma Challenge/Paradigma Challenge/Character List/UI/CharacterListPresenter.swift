@@ -13,6 +13,7 @@ protocol CharacterListPresenting {
     func didScrollToLastItem()
     func didSelect(list: CharacterList)
     func didSelect(_ item: Character)
+    func didMarkAsFavorite(_ item: Character)
 }
 
 enum CharacterList: String {
@@ -66,11 +67,26 @@ final class CharacterListPresenter: CharacterListPresenting {
         view?.navigateToDetailView(for: item.location)
     }
     
+    func didMarkAsFavorite(_ item: Character) {
+        Task.init {
+            do {
+                let favorites = try await favoritesRepository.getFavorites()
+                if favorites.contains(where: { $0.id == item.id }) {
+                    try await favoritesRepository.removeFarite(item)
+                } else {
+                    try await favoritesRepository.addFavorite(item)
+                }
+            } catch {
+                // TODO: Handle error
+            }
+        }
+    }
+    
     private func loadResults(untilPage page: Int) async {
         do {
-            let results = try await resultRepository.getResults(forPage: resultsCurrentPage)
+            let results = try await resultRepository.getResults(untilPage: resultsCurrentPage)
             await MainActor.run {
-                view?.update(with: results)
+                view?.update(with: results, isPagingEnabled: true)
             }
         } catch {
             // TODO: Handle error
@@ -81,7 +97,7 @@ final class CharacterListPresenter: CharacterListPresenting {
         do {
             let favorites = try await favoritesRepository.getFavorites()
             await MainActor.run {
-                view?.update(with: favorites)
+                view?.update(with: favorites, isPagingEnabled: false)
             }
         } catch {
             // TODO: Handle error

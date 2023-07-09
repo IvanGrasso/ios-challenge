@@ -11,6 +11,7 @@ import UIKit
 protocol CharacterCollectionViewControllerDelegate: AnyObject {
     func didScrollToLastItem()
     func didSelect(_ item: Character)
+    func didMarkAsFavorite(_ item: Character)
 }
 
 class CharacterCollectionViewController: UITableViewController {
@@ -23,20 +24,24 @@ class CharacterCollectionViewController: UITableViewController {
         }
     }
     
+    var showsActivityFooter = false {
+        didSet {
+            tableView.tableFooterView = showsActivityFooter ? activityFooterView : nil
+        }
+    }
+    
+    private lazy var activityFooterView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 44)
+        spinner.startAnimating()
+        return spinner
+    }()
+    
     private lazy var imageCache = ImageCache()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.register(CharacterCell.self, forCellReuseIdentifier: "DefaultCell")
-        
-        tableView.tableFooterView = {
-            let spinner = UIActivityIndicatorView(style: .medium)
-            spinner.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 44)
-            spinner.startAnimating()
-            return spinner
-        }()
-        
         tableView.showsVerticalScrollIndicator = false
     }
     
@@ -60,5 +65,17 @@ class CharacterCollectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = items[indexPath.row]
         delegate?.didSelect(item)
+    }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .normal,
+                                        title: "Favorite") { [weak self] (action, view, completionHandler) in
+            guard let self = self else { return }
+            let item = self.items[indexPath.row]
+            self.delegate?.didMarkAsFavorite(item)
+            completionHandler(true)
+        }
+        action.backgroundColor = .systemBlue
+        return UISwipeActionsConfiguration(actions: [action])
     }
 }
