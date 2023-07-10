@@ -10,15 +10,12 @@ import Foundation
 protocol CharacterListPresenting {
     var view: CharacterListView? { get set }
     func viewDidLoad()
-    func didScrollToLastItem()
-    func didSelect(list: CharacterList)
+    func didSelectResultList()
+    func didSelectFavoritesList()
+    func didScrollToLastResult()
     func didSelect(_ item: Character)
     func didMarkAsFavorite(_ item: Character)
-}
-
-enum CharacterList: String {
-    case results = "All"
-    case favorites
+    func didUnmarkAsFavorite(_ item: Character)
 }
 
 final class CharacterListPresenter: CharacterListPresenting {
@@ -28,7 +25,6 @@ final class CharacterListPresenter: CharacterListPresenting {
     private let resultRepository: ResultRepository
     private let favoritesRepository: FavoritesRepository
     
-    private var selectedList: CharacterList?
     private var resultsCurrentPage = 1
     
     init(resultRepository: ResultRepository = ResultWebAPIRepository(),
@@ -38,29 +34,26 @@ final class CharacterListPresenter: CharacterListPresenting {
     }
     
     func viewDidLoad() {
-        view?.setUp(withLists: [.results, .favorites])
+        view?.setUp(withListTitles: ["All", "Favorites"])
     }
     
-    func didScrollToLastItem() {
-        guard selectedList == .results else { return }
+    func didScrollToLastResult() {
         resultsCurrentPage += 1
         Task.init {
             await loadResults(untilPage: resultsCurrentPage)
         }
     }
     
-    func didSelect(list: CharacterList) {
-        switch list {
-        case .results:
-            Task.init {
-                await loadResults(untilPage: resultsCurrentPage)
-            }
-        case .favorites:
-            Task.init {
-                await loadFavorites()
-            }
+    func didSelectResultList() {
+        Task.init {
+            await loadResults(untilPage: resultsCurrentPage)
         }
-        selectedList = list
+    }
+    
+    func didSelectFavoritesList() {
+        Task.init {
+            await loadFavorites()
+        }
     }
     
     func didSelect(_ item: Character) {
@@ -70,12 +63,17 @@ final class CharacterListPresenter: CharacterListPresenting {
     func didMarkAsFavorite(_ item: Character) {
         Task.init {
             do {
-                let favorites = try await favoritesRepository.getFavorites()
-                if favorites.contains(where: { $0.id == item.id }) {
-                    try await favoritesRepository.removeFarite(item)
-                } else {
-                    try await favoritesRepository.addFavorite(item)
-                }
+                try await favoritesRepository.addFavorite(item)
+            } catch {
+                // TODO: Handle error
+            }
+        }
+    }
+    
+    func didUnmarkAsFavorite(_ item: Character) {
+        Task.init {
+            do {
+                try await favoritesRepository.removeFavorite(item)
             } catch {
                 // TODO: Handle error
             }
@@ -86,7 +84,7 @@ final class CharacterListPresenter: CharacterListPresenting {
         do {
             let results = try await resultRepository.getResults(untilPage: resultsCurrentPage)
             await MainActor.run {
-                view?.update(with: results, isPagingEnabled: true)
+                view?.updateResults(with: results, isPagingEnabled: true)
             }
         } catch {
             // TODO: Handle error
@@ -97,7 +95,7 @@ final class CharacterListPresenter: CharacterListPresenting {
         do {
             let favorites = try await favoritesRepository.getFavorites()
             await MainActor.run {
-                view?.update(with: favorites, isPagingEnabled: false)
+                view?.updateFavorites(with: favorites)
             }
         } catch {
             // TODO: Handle error

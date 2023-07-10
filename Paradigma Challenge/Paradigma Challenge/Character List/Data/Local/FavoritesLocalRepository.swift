@@ -20,7 +20,7 @@ class FavoritesLocalRepository: FavoritesRepository {
         favorites.append(character)
     }
     
-    func removeFarite(_ character: Character) async throws {
+    func removeFavorite(_ character: Character) async throws {
         guard favorites.contains(where: { $0.id == character.id }) else { return }
         favorites.removeAll(where: { $0.id == character.id })
     }

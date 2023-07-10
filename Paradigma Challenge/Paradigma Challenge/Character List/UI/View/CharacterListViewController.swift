@@ -9,8 +9,9 @@ import Foundation
 import UIKit
 
 protocol CharacterListView: AnyObject {
-    func setUp(withLists lists: [CharacterList])
-    func update(with items: [Character], isPagingEnabled: Bool)
+    func setUp(withListTitles titles: [String])
+    func updateResults(with items: [Character], isPagingEnabled: Bool)
+    func updateFavorites(with items: [Character])
     func navigateToDetailView(for location: CharacterLocation?)
     func showActivityIndicator()
     func hideActivityIndicator()
@@ -22,10 +23,16 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     private var presenter: CharacterListPresenting
     
     private let segmentedControl = UISegmentedControl()
-    private var collectionViewController = CharacterCollectionViewController()
+    private let imageCache: ImageCache
+    private lazy var resultViewController = ResultCollectionViewController(imageCache: imageCache)
+    private lazy var favoritesViewController = FavoritesCollectionViewController(imageCache: imageCache)
     
-    init(presenter: CharacterListPresenting = CharacterListPresenter()) {
+    private var currentViewController: UIViewController?
+    
+    init(presenter: CharacterListPresenting = CharacterListPresenter(),
+         imageCache: ImageCache = ImageCache()) {
         self.presenter = presenter
+        self.imageCache = imageCache
         super.init(nibName: nil, bundle: nil)
         self.presenter.view = self
     }
@@ -38,33 +45,60 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addChild(collectionViewController)
-        collectionViewController.delegate = self
-        view.addSubview(collectionViewController.view)
-        collectionViewController.view.pinToSuperview()
+        addChild(resultViewController)
+        resultViewController.delegate = self
+        
+        addChild(favoritesViewController)
+        favoritesViewController.delegate = self
         
         presenter.viewDidLoad()
     }
     
-    func setUp(withLists lists: [CharacterList]) {
-        guard !lists.isEmpty else { return }
+    func setUp(withListTitles titles: [String]) {
+        guard !titles.isEmpty else { return }
         segmentedControl.removeAllSegments()
         navigationItem.titleView = segmentedControl
-        lists.enumerated().forEach { index, list in
-            let handler: UIActionHandler = { [weak self] _ in
-                self?.presenter.didSelect(list: list)
+        titles.enumerated().forEach { index, title in
+            switch index {
+            case 0:
+                let handler: UIActionHandler = { [weak self] _ in
+                    guard let self = self else { return }
+                    self.show(resultViewController)
+                    self.presenter.didSelectResultList()
+                }
+                let action = UIAction(title: title, handler: handler)
+                segmentedControl.insertSegment(action: action, at: index, animated: false)
+            case 1:
+                let handler: UIActionHandler = { [weak self] _ in
+                    guard let self = self else { return }
+                    self.show(favoritesViewController)
+                    self.presenter.didSelectFavoritesList()
+                }
+                let action = UIAction(title: title, handler: handler)
+                segmentedControl.insertSegment(action: action, at: index, animated: false)
+            default: break
             }
-            let action = UIAction(title: list.rawValue, handler: handler)
-            segmentedControl.insertSegment(action: action, at: index, animated: false)
         }
+        
         segmentedControl.selectedSegmentIndex = 0
-        presenter.didSelect(list: lists.first!)
+        presenter.didSelectResultList()
+        show(resultViewController)
     }
     
-    func update(with items: [Character],
-                isPagingEnabled: Bool) {
-        collectionViewController.items = items
-        collectionViewController.showsActivityFooter = isPagingEnabled
+    private func show(_ viewController: UIViewController) {
+        currentViewController?.view.removeFromSuperview()
+        view.addSubview(viewController.view)
+        viewController.view.pinToSuperview()
+        currentViewController = viewController
+    }
+    
+    func updateResults(with items: [Character], isPagingEnabled: Bool) {
+        resultViewController.items = items
+        resultViewController.showsActivityFooter = isPagingEnabled
+    }
+    
+    func updateFavorites(with items: [Character]) {
+        favoritesViewController.items = items
     }
     
     func navigateToDetailView(for location: CharacterLocation?) {
@@ -89,7 +123,7 @@ final class CharacterListViewController: UIViewController, CharacterListView {
 extension CharacterListViewController: CharacterCollectionViewControllerDelegate {
     
     func didScrollToLastItem() {
-        presenter.didScrollToLastItem()
+        presenter.didScrollToLastResult()
     }
     
     func didSelect(_ item: Character) {
@@ -98,5 +132,11 @@ extension CharacterListViewController: CharacterCollectionViewControllerDelegate
     
     func didMarkAsFavorite(_ item: Character) {
         presenter.didMarkAsFavorite(item)
+    }
+}
+
+extension CharacterListViewController: FavoritesCollectionViewControllerDelegate {
+    func didUnmarkAsFavorite(_ item: Character) {
+        presenter.didUnmarkAsFavorite(item)
     }
 }

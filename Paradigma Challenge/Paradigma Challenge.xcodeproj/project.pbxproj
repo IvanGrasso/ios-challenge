@@ -24,7 +24,7 @@
 		2D6742252A54629D00FFF576 /* ResultWebAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742242A54629D00FFF576 /* ResultWebAPIConstants.swift */; };
 		2D6742272A54657400FFF576 /* CharacterLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742262A54657400FFF576 /* CharacterLocation.swift */; };
 		2D67422A2A548FCD00FFF576 /* CharacterListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742292A548FCD00FFF576 /* CharacterListViewController.swift */; };
-		2D67422D2A54947C00FFF576 /* CharacterCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67422C2A54947C00FFF576 /* CharacterCollectionViewController.swift */; };
+		2D67422D2A54947C00FFF576 /* ResultCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67422C2A54947C00FFF576 /* ResultCollectionViewController.swift */; };
 		2D67422F2A54952A00FFF576 /* CharacterListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67422E2A54952A00FFF576 /* CharacterListPresenter.swift */; };
 		2D6742322A55B1D300FFF576 /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742312A55B1D300FFF576 /* UIView+Utils.swift */; };
 		2D6742342A57517E00FFF576 /* FavoritesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742332A57517E00FFF576 /* FavoritesRepository.swift */; };
@@ -38,6 +38,7 @@
 		2D67424E2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67424D2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift */; };
 		2D6742502A58620F00FFF576 /* CharacterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D67424F2A58620F00FFF576 /* CharacterCell.swift */; };
 		2D6742532A58685D00FFF576 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742522A58685D00FFF576 /* ImageCache.swift */; };
+		2D6742552A5B684500FFF576 /* FavoritesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6742542A5B684500FFF576 /* FavoritesCollectionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,7 +80,7 @@
 		2D6742242A54629D00FFF576 /* ResultWebAPIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultWebAPIConstants.swift; sourceTree = "<group>"; };
 		2D6742262A54657400FFF576 /* CharacterLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterLocation.swift; sourceTree = "<group>"; };
 		2D6742292A548FCD00FFF576 /* CharacterListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterListViewController.swift; sourceTree = "<group>"; };
-		2D67422C2A54947C00FFF576 /* CharacterCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterCollectionViewController.swift; sourceTree = "<group>"; };
+		2D67422C2A54947C00FFF576 /* ResultCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultCollectionViewController.swift; sourceTree = "<group>"; };
 		2D67422E2A54952A00FFF576 /* CharacterListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterListPresenter.swift; sourceTree = "<group>"; };
 		2D6742312A55B1D300FFF576 /* UIView+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Utils.swift"; sourceTree = "<group>"; };
 		2D6742332A57517E00FFF576 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
@@ -93,6 +94,7 @@
 		2D67424D2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterLocationDetailPresenter.swift; sourceTree = "<group>"; };
 		2D67424F2A58620F00FFF576 /* CharacterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterCell.swift; sourceTree = "<group>"; };
 		2D6742522A58685D00FFF576 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		2D6742542A5B684500FFF576 /* FavoritesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesCollectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -252,7 +254,8 @@
 			isa = PBXGroup;
 			children = (
 				2D6742292A548FCD00FFF576 /* CharacterListViewController.swift */,
-				2D67422C2A54947C00FFF576 /* CharacterCollectionViewController.swift */,
+				2D67422C2A54947C00FFF576 /* ResultCollectionViewController.swift */,
+				2D6742542A5B684500FFF576 /* FavoritesCollectionViewController.swift */,
 				2D67424F2A58620F00FFF576 /* CharacterCell.swift */,
 			);
 			path = View;
@@ -480,6 +483,7 @@
 				2D67422F2A54952A00FFF576 /* CharacterListPresenter.swift in Sources */,
 				2D6742322A55B1D300FFF576 /* UIView+Utils.swift in Sources */,
 				2D6742502A58620F00FFF576 /* CharacterCell.swift in Sources */,
+				2D6742552A5B684500FFF576 /* FavoritesCollectionViewController.swift in Sources */,
 				2D6742272A54657400FFF576 /* CharacterLocation.swift in Sources */,
 				2D6742342A57517E00FFF576 /* FavoritesRepository.swift in Sources */,
 				2D6742462A584D9000FFF576 /* WebAPILocationDetail.swift in Sources */,
@@ -490,7 +494,7 @@
 				2D6742372A5751E200FFF576 /* FavoritesLocalRepository.swift in Sources */,
 				2D6742482A584E4B00FFF576 /* LocationDetailWebAPIConstants.swift in Sources */,
 				2D67424E2A58520D00FFF576 /* CharacterLocationDetailPresenter.swift in Sources */,
-				2D67422D2A54947C00FFF576 /* CharacterCollectionViewController.swift in Sources */,
+				2D67422D2A54947C00FFF576 /* ResultCollectionViewController.swift in Sources */,
 				2D67423B2A58494700FFF576 /* LocationDetail.swift in Sources */,
 				2D6742142A535A4200FFF576 /* ResultWebAPIResponse.swift in Sources */,
 				2D6742252A54629D00FFF576 /* ResultWebAPIConstants.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  CharacterCollectionViewController.swift
+//  ResultCollectionViewController.swift
 //  Paradigma Challenge
 //
 //  Created by Ivan Grasso on 7/4/23.
@@ -14,7 +14,7 @@ protocol CharacterCollectionViewControllerDelegate: AnyObject {
     func didMarkAsFavorite(_ item: Character)
 }
 
-class CharacterCollectionViewController: UITableViewController {
+class ResultCollectionViewController: UITableViewController {
     
     weak var delegate: CharacterCollectionViewControllerDelegate?
     
@@ -37,7 +37,17 @@ class CharacterCollectionViewController: UITableViewController {
         return spinner
     }()
     
-    private lazy var imageCache = ImageCache()
+    private let imageCache: ImageCache
+    
+    init(imageCache: ImageCache = ImageCache()) {
+        self.imageCache = imageCache
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
