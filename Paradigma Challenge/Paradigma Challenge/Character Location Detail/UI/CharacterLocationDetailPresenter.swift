@@ -26,16 +26,36 @@ final class CharacterLocationDetailPresenter: CharacterLocationDetailPresenting 
     }
     
     func viewDidLoad() {
-        guard let locationID = locationID else { return }
+        guard locationID != nil else {
+            view?.update(with: LocationDetail(id: 0, name: "Location Unknown", type: "", dimension: ""))
+            return
+        }
+        view?.showActivityIndicator()
+        loadLocation()
+    }
+    
+    func loadLocation() {
         Task.init {
             do {
+                guard let locationID = locationID else { return }
                 let detail = try await repository.getLocationDetail(forLocationID: locationID)
                 await MainActor.run {
+                    view?.hideActivityIndicator()
                     view?.update(with: detail)
                 }
             } catch {
-                // TODO: Handle error
+                await MainActor.run {
+                    view?.showAlert(withTitle: "Something's wrong",
+                                    message: "There was an error loading the location.",
+                                    buttonTitle: "Retry",
+                                    handler: { [weak self] in
+                        guard let self = self else { return }
+                        self.view?.showActivityIndicator()
+                        self.loadLocation()
+                    })
+                }
             }
         }
+        
     }
 }

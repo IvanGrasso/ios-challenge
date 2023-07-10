@@ -12,14 +12,41 @@ protocol CharacterLocationDetailView: AnyObject {
     func update(with detail: LocationDetail)
     func showActivityIndicator()
     func hideActivityIndicator()
-    func showErrorMessage(_ message: String)
+    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () -> Void)
 }
 
 class CharacterLocationDetailViewController: UIViewController, CharacterLocationDetailView {
     
     private var presenter: CharacterLocationDetailPresenting
     
-    private let nameLabel = UILabel()
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        return stackView
+    }()
+    
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        return label
+    }()
+    
+    private let typeLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    private let dimensionLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    private lazy var activityIndicator = UIActivityIndicatorView(style: .large)
+    private var alertController = UIAlertController()
     
     init(presenter: CharacterLocationDetailPresenting) {
         self.presenter = presenter
@@ -37,27 +64,44 @@ class CharacterLocationDetailViewController: UIViewController, CharacterLocation
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(nameLabel)
-        nameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        nameLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
+        stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        stackView.addArrangedSubview(nameLabel)
+        stackView.addArrangedSubview(typeLabel)
+        stackView.addArrangedSubview(dimensionLabel)
         
         presenter.viewDidLoad()
     }
     
     func update(with detail: LocationDetail) {
         nameLabel.text = detail.name
+        typeLabel.text = detail.type.isEmpty ? nil: "\nType: \(detail.type)"
+        dimensionLabel.text = detail.dimension.isEmpty ?  nil : "Dimension: \(detail.dimension)"
     }
     
     func showActivityIndicator() {
-        
+        view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        activityIndicator.startAnimating()
     }
     
     func hideActivityIndicator() {
-        
+        activityIndicator.stopAnimating()
+        activityIndicator.removeFromSuperview()
     }
     
-    func showErrorMessage(_ message: String) {
-        
+    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () -> Void) {
+        alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: buttonTitle, style: .default, handler: { [weak self] _ in
+            handler()
+            self?.alertController.dismiss(animated: true)
+        })
+        alertController.addAction(action)
+        present(alertController, animated: true, completion: nil)
     }
 }
