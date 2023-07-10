@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum FavoritesLocalRepositoryError: Error {
+    case unknownError
+}
+
 class FavoritesLocalRepository: FavoritesRepository {
     
     private var favorites = [Character]()

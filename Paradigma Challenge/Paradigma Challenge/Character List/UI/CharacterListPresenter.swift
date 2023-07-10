@@ -45,38 +45,32 @@ final class CharacterListPresenter: CharacterListPresenting {
     }
     
     func didSelectResultList() {
+        view?.showActivityIndicator()
         Task.init {
             await loadResults(untilPage: resultsCurrentPage)
         }
     }
     
     func didSelectFavoritesList() {
+        view?.showActivityIndicator()
         Task.init {
             await loadFavorites()
         }
     }
     
     func didSelect(_ item: Character) {
-        view?.navigateToDetailView(for: item.location)
+        view?.navigateToDetailView(withTitle: "\(item.name)'s Last Location", location: item.location)
     }
     
     func didMarkAsFavorite(_ item: Character) {
         Task.init {
-            do {
-                try await favoritesRepository.addFavorite(item)
-            } catch {
-                // TODO: Handle error
-            }
+            try await favoritesRepository.addFavorite(item)
         }
     }
     
     func didUnmarkAsFavorite(_ item: Character) {
         Task.init {
-            do {
-                try await favoritesRepository.removeFavorite(item)
-            } catch {
-                // TODO: Handle error
-            }
+            try await favoritesRepository.removeFavorite(item)
         }
     }
     
@@ -84,10 +78,22 @@ final class CharacterListPresenter: CharacterListPresenting {
         do {
             let results = try await resultRepository.getResults(untilPage: resultsCurrentPage)
             await MainActor.run {
+                view?.hideActivityIndicator()
                 view?.updateResults(with: results, isPagingEnabled: true)
             }
         } catch {
-            // TODO: Handle error
+            await MainActor.run {
+                view?.showAlert(withTitle: "Something's wrong",
+                                message: "There was an error loading your content.",
+                                buttonTitle: "Retry",
+                                handler: { [weak self] in
+                    guard let self = self else { return }
+                    self.view?.showActivityIndicator()
+                    Task.init {
+                        await self.loadResults(untilPage: self.resultsCurrentPage)
+                    }
+                })
+            }
         }
     }
     
@@ -95,10 +101,22 @@ final class CharacterListPresenter: CharacterListPresenting {
         do {
             let favorites = try await favoritesRepository.getFavorites()
             await MainActor.run {
+                view?.hideActivityIndicator()
                 view?.updateFavorites(with: favorites)
             }
         } catch {
-            // TODO: Handle error
+            await MainActor.run {
+                view?.showAlert(withTitle: "Something's wrong",
+                                message: "There was an error loading your favorites.",
+                                buttonTitle: "Retry",
+                                handler: { [weak self] in
+                    guard let self = self else { return }
+                    self.view?.showActivityIndicator()
+                    Task.init {
+                        await self.loadFavorites()
+                    }
+                })
+            }
         }
     }
 }

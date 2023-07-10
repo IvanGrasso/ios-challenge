@@ -12,10 +12,10 @@ protocol CharacterListView: AnyObject {
     func setUp(withListTitles titles: [String])
     func updateResults(with items: [Character], isPagingEnabled: Bool)
     func updateFavorites(with items: [Character])
-    func navigateToDetailView(for location: CharacterLocation?)
+    func navigateToDetailView(withTitle title: String, location: CharacterLocation?)
     func showActivityIndicator()
     func hideActivityIndicator()
-    func showErrorMessage(_ message: String)
+    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () -> Void)
 }
 
 final class CharacterListViewController: UIViewController, CharacterListView {
@@ -26,8 +26,9 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     private let imageCache: ImageCache
     private lazy var resultViewController = ResultCollectionViewController(imageCache: imageCache)
     private lazy var favoritesViewController = FavoritesCollectionViewController(imageCache: imageCache)
-    
+    private lazy var activityIndicator = UIActivityIndicatorView(style: .large)
     private var currentViewController: UIViewController?
+    private var alertController = UIAlertController()
     
     init(presenter: CharacterListPresenting = CharacterListPresenter(),
          imageCache: ImageCache = ImageCache()) {
@@ -101,22 +102,36 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         favoritesViewController.items = items
     }
     
-    func navigateToDetailView(for location: CharacterLocation?) {
+    func navigateToDetailView(withTitle title: String, location: CharacterLocation?) {
         let detailPresenter = CharacterLocationDetailPresenter(locationID: location?.id)
-        let detailView = CharacterLocationDetailViewController(presenter: detailPresenter)
-        navigationController?.pushViewController(detailView, animated: true)
+        let detailVC = CharacterLocationDetailViewController(presenter: detailPresenter)
+        detailVC.title = title
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     func showActivityIndicator() {
-        
+        currentViewController?.view.isHidden = true
+        view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        activityIndicator.startAnimating()
     }
     
     func hideActivityIndicator() {
-        
+        currentViewController?.view.isHidden = false
+        activityIndicator.stopAnimating()
+        activityIndicator.removeFromSuperview()
     }
     
-    func showErrorMessage(_ message: String) {
-        
+    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () -> Void) {
+        alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: buttonTitle, style: .default, handler: { [weak self] _ in
+            handler()
+            self?.alertController.dismiss(animated: true)
+        })
+        alertController.addAction(action)
+        present(alertController, animated: true, completion: nil)
     }
 }
 
