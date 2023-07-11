@@ -10,12 +10,12 @@ import Foundation
 protocol CharacterListPresenting {
     var view: CharacterListView? { get set }
     func viewDidLoad()
-    func didSelectResultList()
-    func didSelectFavoritesList()
-    func didScrollToLastResult()
+    func didSelectResultList() async
+    func didSelectFavoritesList() async
+    func didScrollToLastResult() async
     func didSelect(_ item: Character)
-    func didMarkAsFavorite(_ item: Character)
-    func didUnmarkAsFavorite(_ item: Character)
+    func didMarkAsFavorite(_ item: Character) async
+    func didUnmarkAsFavorite(_ item: Character) async
 }
 
 final class CharacterListPresenter: CharacterListPresenting {
@@ -37,18 +37,16 @@ final class CharacterListPresenter: CharacterListPresenting {
         view?.setUp(withListTitles: ["All", "Favorites"])
     }
     
-    func didScrollToLastResult() {
+    func didScrollToLastResult() async {
         resultsCurrentPage += 1
-        Task.init {
-            await loadResults(untilPage: resultsCurrentPage)
-        }
+        await loadResults(untilPage: resultsCurrentPage)
     }
     
-    func didSelectResultList() {
-        view?.showActivityIndicator()
-        Task.init {
-            await loadResults(untilPage: resultsCurrentPage)
+    func didSelectResultList() async {
+        await MainActor.run {
+            view?.showActivityIndicator()
         }
+        await loadResults(untilPage: resultsCurrentPage)
     }
     
     func didSelectFavoritesList() {

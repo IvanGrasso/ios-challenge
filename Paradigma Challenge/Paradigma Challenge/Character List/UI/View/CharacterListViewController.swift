@@ -65,7 +65,9 @@ final class CharacterListViewController: UIViewController, CharacterListView {
                 let handler: UIActionHandler = { [weak self] _ in
                     guard let self = self else { return }
                     self.show(resultViewController)
-                    self.presenter.didSelectResultList()
+                    Task() {
+                        await self.presenter.didSelectResultList()
+                    }
                 }
                 let action = UIAction(title: title, handler: handler)
                 segmentedControl.insertSegment(action: action, at: index, animated: false)
@@ -73,7 +75,9 @@ final class CharacterListViewController: UIViewController, CharacterListView {
                 let handler: UIActionHandler = { [weak self] _ in
                     guard let self = self else { return }
                     self.show(favoritesViewController)
-                    self.presenter.didSelectFavoritesList()
+                    Task() {
+                        await self.presenter.didSelectFavoritesList()
+                    }
                 }
                 let action = UIAction(title: title, handler: handler)
                 segmentedControl.insertSegment(action: action, at: index, animated: false)
@@ -82,7 +86,9 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         }
         
         segmentedControl.selectedSegmentIndex = 0
-        presenter.didSelectResultList()
+        Task() {
+            await self.presenter.didSelectResultList()
+        }
         show(resultViewController)
     }
     
@@ -138,7 +144,9 @@ final class CharacterListViewController: UIViewController, CharacterListView {
 extension CharacterListViewController: CharacterCollectionViewControllerDelegate {
     
     func didScrollToLastItem() {
-        presenter.didScrollToLastResult()
+        Task() {
+            await presenter.didScrollToLastResult()
+        }
     }
     
     func didSelect(_ item: Character) {
@@ -146,12 +154,17 @@ extension CharacterListViewController: CharacterCollectionViewControllerDelegate
     }
     
     func didMarkAsFavorite(_ item: Character) {
-        presenter.didMarkAsFavorite(item)
+        Task() {
+            await presenter.didMarkAsFavorite(item)
+        }
     }
 }
 
 extension CharacterListViewController: FavoritesCollectionViewControllerDelegate {
+    
     func didUnmarkAsFavorite(_ item: Character) {
-        presenter.didUnmarkAsFavorite(item)
+        Task() {
+            await presenter.didUnmarkAsFavorite(item)
+        }
     }
 }
