@@ -10,6 +10,8 @@ import UIKit
 
 final class CharacterCell: UITableViewCell {
     
+    static let reuseIdentifier = "CharacterCell"
+    
     private var imageTask: Cancellable?
     
     private var mainStackView: UIStackView = {

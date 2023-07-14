@@ -51,7 +51,7 @@ class ResultCollectionViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(CharacterCell.self, forCellReuseIdentifier: "DefaultCell")
+        tableView.register(CharacterCell.self, forCellReuseIdentifier: CharacterCell.reuseIdentifier)
         tableView.showsVerticalScrollIndicator = false
     }
     
@@ -60,7 +60,10 @@ class ResultCollectionViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath) as? CharacterCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CharacterCell.reuseIdentifier, for: indexPath) as? CharacterCell else {
+            assertionFailure("Failed to load cell")
+            return UITableViewCell()
+        }
         let character = items[indexPath.row]
         cell.configure(with: character, imageCache: imageCache)
         return cell
