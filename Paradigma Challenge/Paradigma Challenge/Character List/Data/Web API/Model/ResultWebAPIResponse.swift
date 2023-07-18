@@ -9,4 +9,5 @@ import Foundation
 
 struct ResultWebAPIResponse: Decodable {
     let results: [WebAPIResult]
+    let info: WebAPIInfo
 }

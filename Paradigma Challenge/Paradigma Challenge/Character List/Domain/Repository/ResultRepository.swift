@@ -8,5 +8,6 @@
 import Foundation
 
 protocol ResultRepository {
-    func getResults(untilPage page: Int) async throws -> [Character]
+    func getResults(forPage page: Int) async throws -> [Character]
+    var pageCount: Int { get }
 }

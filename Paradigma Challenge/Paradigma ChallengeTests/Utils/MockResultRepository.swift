@@ -12,7 +12,7 @@ final class MockResultRepository: ResultRepository {
     
     var mockGetResults: ((_ page: Int) async throws -> [Paradigma_Challenge.Character])?
     
-    func getResults(untilPage page: Int) async throws -> [Paradigma_Challenge.Character] {
+    func getResults(forPage page: Int) async throws -> [Paradigma_Challenge.Character] {
         return try await mockGetResults?(page) ?? []
     }
 }

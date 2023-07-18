@@ -13,7 +13,7 @@ struct WebAPIResult: Decodable {
     let status: String
     let species: String
     let gender: String
-    let origin: ResultWebAPILocation
-    let location: ResultWebAPILocation
+    let origin: WebAPILocation
+    let location: WebAPILocation
     let image: String
 }

@@ -38,8 +38,8 @@ final class CharacterListPresenter: CharacterListPresenting {
     }
     
     func didScrollToLastResult() async {
-        resultsCurrentPage += 1
-        await loadResults(untilPage: resultsCurrentPage)
+        guard resultRepository.pageCount > resultsCurrentPage else { return }
+        await loadResults(untilPage: resultsCurrentPage + 1)
     }
     
     func didSelectResultList() async {
@@ -74,10 +74,11 @@ final class CharacterListPresenter: CharacterListPresenting {
     
     private func loadResults(untilPage page: Int) async {
         do {
-            let results = try await resultRepository.getResults(untilPage: resultsCurrentPage)
+            let results = try await resultRepository.getResults(forPage: page)
+            resultsCurrentPage += 1
             await MainActor.run {
                 view?.hideActivityIndicator()
-                view?.updateResults(with: results, isPagingEnabled: true)
+                view?.updateResults(with: results, isPagingEnabled: resultRepository.pageCount > resultsCurrentPage)
             }
         } catch {
             await MainActor.run {
