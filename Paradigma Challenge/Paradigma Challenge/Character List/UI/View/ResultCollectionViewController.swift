@@ -1,5 +1,5 @@
 //
-//  ResultCollectionViewController.swift
+//  ResultTableViewController.swift
 //  Paradigma Challenge
 //
 //  Created by Ivan Grasso on 7/4/23.
@@ -8,15 +8,15 @@
 import Foundation
 import UIKit
 
-protocol CharacterCollectionViewControllerDelegate: AnyObject {
+protocol ResultTableViewControllerDelegate: AnyObject {
     func didScrollToLastItem()
     func didSelect(_ item: Character)
     func didMarkAsFavorite(_ item: Character)
 }
 
-class ResultCollectionViewController: UITableViewController {
+class ResultTableViewController: UITableViewController {
     
-    weak var delegate: CharacterCollectionViewControllerDelegate?
+    weak var delegate: ResultTableViewControllerDelegate?
     
     var items = [Character]() {
         didSet {

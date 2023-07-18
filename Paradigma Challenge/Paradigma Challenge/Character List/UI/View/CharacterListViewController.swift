@@ -24,7 +24,7 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     
     private let segmentedControl = UISegmentedControl()
     private let imageCache: ImageCache
-    private lazy var resultViewController = ResultCollectionViewController(imageCache: imageCache)
+    private lazy var resultViewController = ResultTableViewController(imageCache: imageCache)
     private lazy var favoritesViewController = FavoritesCollectionViewController(imageCache: imageCache)
     private lazy var activityIndicator = UIActivityIndicatorView(style: .large)
     private var currentViewController: UIViewController?
@@ -141,7 +141,7 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     }
 }
 
-extension CharacterListViewController: CharacterCollectionViewControllerDelegate {
+extension CharacterListViewController: ResultTableViewControllerDelegate {
     
     func didScrollToLastItem() {
         Task() {

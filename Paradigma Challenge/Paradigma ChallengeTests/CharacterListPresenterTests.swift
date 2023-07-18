@@ -32,7 +32,7 @@ final class CharacterListPresenterTests: XCTestCase {
         super.tearDown()
     }
     
-    func test_GivenViewIsSetUp_WhenViewDidScrollToLastResult_ThenActivityIndicatorHidesAndItemsUpdatedWithPagingEnabled() async throws {
+    func test_GivenViewIsSetUp_WhenViewDidScrollToLastResult_ThenActivityIndicatorHidesAndItemsUpdateWithPagingEnabled() async throws {
         // Given
         var testPage = 0
         resultRepository.mockGetResults = { page in
