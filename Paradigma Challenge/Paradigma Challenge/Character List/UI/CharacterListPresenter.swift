@@ -26,6 +26,9 @@ final class CharacterListPresenter: CharacterListPresenting {
     private let favoritesRepository: FavoritesRepository
     
     private var resultsCurrentPage = 0
+    private var isPagingEnabled: Bool {
+        return resultRepository.pageCount > resultsCurrentPage
+    }
     
     init(resultRepository: ResultRepository = ResultWebAPIRepository(),
          favoritesRepository: FavoritesRepository = FavoritesLocalRepository()) {
@@ -50,7 +53,7 @@ final class CharacterListPresenter: CharacterListPresenting {
             await loadResults(forPage: 1)
         } else {
             await MainActor.run {
-                view?.updateResults(with: resultRepository.results, isPagingEnabled: resultRepository.pageCount > resultsCurrentPage)
+                view?.updateResults(with: resultRepository.results, isPagingEnabled: isPagingEnabled)
             }
         }
     }
@@ -81,10 +84,10 @@ final class CharacterListPresenter: CharacterListPresenting {
     private func loadResults(forPage page: Int) async {
         do {
             try await resultRepository.getResults(forPage: page)
-            resultsCurrentPage = page
+            resultsCurrentPage += 1
             await MainActor.run {
                 view?.hideActivityIndicator()
-                view?.updateResults(with: resultRepository.results, isPagingEnabled: resultRepository.pageCount > resultsCurrentPage)
+                view?.updateResults(with: resultRepository.results, isPagingEnabled: isPagingEnabled)
             }
         } catch {
             await MainActor.run {
@@ -95,7 +98,7 @@ final class CharacterListPresenter: CharacterListPresenting {
                     guard let self = self else { return }
                     self.view?.showActivityIndicator()
                     Task.init {
-                        await self.loadResults(forPage: self.resultsCurrentPage)
+                        await self.loadResults(forPage: page)
                     }
                 })
             }
