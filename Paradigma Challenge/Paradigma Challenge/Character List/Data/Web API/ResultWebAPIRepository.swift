@@ -14,10 +14,9 @@ enum ResultWebAPIRepositoryError: Error {
 class ResultWebAPIRepository: ResultRepository {
     
     var pageCount = 0
-    
     var results = [Character]()
     
-    func getResults(forPage page: Int) async throws -> [Character] {
+    func getResults(forPage page: Int) async throws {
         guard let url = URL(string: "\(ResultWebAPIConstants.baseURL)\(ResultWebAPIConstants.path)\(page)") else {
             throw ResultWebAPIRepositoryError.invalidURL
         }
@@ -25,7 +24,6 @@ class ResultWebAPIRepository: ResultRepository {
         let response = try JSONDecoder().decode(ResultWebAPIResponse.self, from: data)
         pageCount = response.info.pages
         results.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
-        return results
     }
 }
 

@@ -25,7 +25,7 @@ final class CharacterListPresenter: CharacterListPresenting {
     private let resultRepository: ResultRepository
     private let favoritesRepository: FavoritesRepository
     
-    private var resultsCurrentPage = 1
+    private var resultsCurrentPage = 0
     
     init(resultRepository: ResultRepository = ResultWebAPIRepository(),
          favoritesRepository: FavoritesRepository = FavoritesLocalRepository()) {
@@ -39,14 +39,20 @@ final class CharacterListPresenter: CharacterListPresenting {
     
     func didScrollToLastResult() async {
         guard resultRepository.pageCount > resultsCurrentPage else { return }
-        await loadResults(untilPage: resultsCurrentPage + 1)
+        await loadResults(forPage: resultsCurrentPage + 1)
     }
     
     func didSelectResultList() async {
-        await MainActor.run {
-            view?.showActivityIndicator()
+        if resultsCurrentPage == 0 {
+            await MainActor.run {
+                view?.showActivityIndicator()
+            }
+            await loadResults(forPage: 1)
+        } else {
+            await MainActor.run {
+                view?.updateResults(with: resultRepository.results, isPagingEnabled: resultRepository.pageCount > resultsCurrentPage)
+            }
         }
-        await loadResults(untilPage: resultsCurrentPage)
     }
     
     func didSelectFavoritesList() {
@@ -72,13 +78,13 @@ final class CharacterListPresenter: CharacterListPresenting {
         }
     }
     
-    private func loadResults(untilPage page: Int) async {
+    private func loadResults(forPage page: Int) async {
         do {
-            let results = try await resultRepository.getResults(forPage: page)
-            resultsCurrentPage += 1
+            try await resultRepository.getResults(forPage: page)
+            resultsCurrentPage = page
             await MainActor.run {
                 view?.hideActivityIndicator()
-                view?.updateResults(with: results, isPagingEnabled: resultRepository.pageCount > resultsCurrentPage)
+                view?.updateResults(with: resultRepository.results, isPagingEnabled: resultRepository.pageCount > resultsCurrentPage)
             }
         } catch {
             await MainActor.run {
@@ -89,7 +95,7 @@ final class CharacterListPresenter: CharacterListPresenting {
                     guard let self = self else { return }
                     self.view?.showActivityIndicator()
                     Task.init {
-                        await self.loadResults(untilPage: self.resultsCurrentPage)
+                        await self.loadResults(forPage: self.resultsCurrentPage)
                     }
                 })
             }
