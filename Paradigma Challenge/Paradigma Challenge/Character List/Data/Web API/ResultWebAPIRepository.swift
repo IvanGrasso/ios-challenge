@@ -13,8 +13,8 @@ enum ResultWebAPIRepositoryError: Error {
 
 class ResultWebAPIRepository: ResultRepository {
     
-    var pageCount = 0
-    var results = [Character]()
+    private(set) var pageCount = 0
+    private(set) var results = [Character]()
     
     func getResults(forPage page: Int) async throws {
         guard let url = URL(string: "\(ResultWebAPIConstants.baseURL)\(ResultWebAPIConstants.path)\(page)") else {

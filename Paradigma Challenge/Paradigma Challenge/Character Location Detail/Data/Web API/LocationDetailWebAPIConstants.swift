@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LocationDetailWebAPIConstants {
+enum LocationDetailWebAPIConstants {
     static let baseURL = "https://rickandmortyapi.com/api"
     static let path = "/location/"
 }
