@@ -39,6 +39,9 @@ final class CharacterListPresenter: CharacterListPresenting {
     }
     
     func viewDidLoad() async {
+        await MainActor.run {
+            view?.viewState = .loading
+        }
         await loadResults(forPage: 1)
     }
     
@@ -87,9 +90,6 @@ final class CharacterListPresenter: CharacterListPresenting {
     }
     
     private func loadResults(forPage page: Int) async {
-        await MainActor.run {
-            view?.viewState = .loading
-        }
         do {
             try await resultRepository.getResults(forPage: page)
             resultsCurrentPage += 1
