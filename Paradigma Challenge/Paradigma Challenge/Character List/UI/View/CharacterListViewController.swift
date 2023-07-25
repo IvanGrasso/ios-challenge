@@ -10,7 +10,6 @@ import UIKit
 
 protocol CharacterListView: AnyObject {
     var viewState: CharacterListViewState { get set }
-    func setUp(withListTitles titles: [String])
     func navigateToDetailView(withTitle title: String, location: CharacterLocation?)
     func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () async -> Void)
 }
@@ -58,44 +57,32 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         super.viewDidLoad()
         resultViewController.delegate = self
         favoritesViewController.delegate = self
-        presenter.viewDidLoad()
-    }
-    
-    func setUp(withListTitles titles: [String]) {
-        guard !titles.isEmpty else { return }
-        segmentedControl.removeAllSegments()
-        navigationItem.titleView = segmentedControl
-        titles.enumerated().forEach { index, title in
-            switch index {
-            case 0:
-                let handler: UIActionHandler = { [weak self] _ in
-                    guard let self = self else { return }
-                    self.show(resultViewController)
-                    Task() {
-                        await self.presenter.didSelectResultList()
-                    }
-                }
-                let action = UIAction(title: title, handler: handler)
-                segmentedControl.insertSegment(action: action, at: index, animated: false)
-            case 1:
-                let handler: UIActionHandler = { [weak self] _ in
-                    guard let self = self else { return }
-                    self.show(favoritesViewController)
-                    Task() {
-                        await self.presenter.didSelectFavoritesList()
-                    }
-                }
-                let action = UIAction(title: title, handler: handler)
-                segmentedControl.insertSegment(action: action, at: index, animated: false)
-            default: break
+        
+        let resultsHandler: UIActionHandler = { [weak self] _ in
+            self?.show(self?.resultViewController ?? UIViewController())
+            Task() {
+                await self?.presenter.didSelectResultList()
             }
         }
+        let resultsAction = UIAction(title: "Results", handler: resultsHandler)
+        segmentedControl.insertSegment(action: resultsAction, at: 0, animated: false)
         
-        segmentedControl.selectedSegmentIndex = 0
-        Task() {
-            await self.presenter.didSelectResultList()
+        let favoritesHandler: UIActionHandler = { [weak self] _ in
+            self?.show(self?.favoritesViewController ?? UIViewController())
+            Task() {
+                await self?.presenter.didSelectFavoritesList()
+            }
         }
+        let favoritesAction = UIAction(title: "Favorites", handler: favoritesHandler)
+        segmentedControl.insertSegment(action: favoritesAction, at: 1, animated: false)
+        
+        navigationItem.titleView = segmentedControl
+        segmentedControl.selectedSegmentIndex = 0
         show(resultViewController)
+        
+        Task() {
+            await presenter.viewDidLoad()
+        }
     }
     
     private func show(_ viewController: UIViewController) {

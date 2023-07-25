@@ -9,7 +9,7 @@ import Foundation
 
 protocol CharacterListPresenting {
     var view: CharacterListView? { get set }
-    func viewDidLoad()
+    func viewDidLoad() async
     func didSelectResultList() async
     func didSelectFavoritesList() async
     func didScrollToLastResult() async
@@ -36,8 +36,8 @@ final class CharacterListPresenter: CharacterListPresenting {
         self.favoritesRepository = favoritesRepository
     }
     
-    func viewDidLoad() {
-        view?.setUp(withListTitles: ["All", "Favorites"])
+    func viewDidLoad() async {
+        await loadResults(forPage: 1)
     }
     
     func didScrollToLastResult() async {
@@ -46,15 +46,8 @@ final class CharacterListPresenter: CharacterListPresenting {
     }
     
     func didSelectResultList() async {
-        if resultsCurrentPage == 0 {
-            await MainActor.run {
-                view?.viewState = .loading
-            }
-            await loadResults(forPage: 1)
-        } else {
-            await MainActor.run {
-                view?.viewState = .results(items: resultRepository.results, isPagingEnabled: isPagingEnabled)
-            }
+        await MainActor.run {
+            view?.viewState = .results(items: resultRepository.results, isPagingEnabled: isPagingEnabled)
         }
     }
     
