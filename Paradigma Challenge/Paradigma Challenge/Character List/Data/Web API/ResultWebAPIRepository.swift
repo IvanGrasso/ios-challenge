@@ -20,7 +20,11 @@ class ResultWebAPIRepository: ResultRepository {
         guard let url = URL(string: "\(ResultWebAPIConstants.baseURL)\(ResultWebAPIConstants.path)\(page)") else {
             throw ResultWebAPIRepositoryError.invalidURL
         }
-        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        // Disable disk cache for testing purposes.
+        let urlSession = URLSession(configuration: URLSessionConfiguration.ephemeral)
+        
+        let (data, _) = try await urlSession.data(from: url)
         let response = try JSONDecoder().decode(ResultWebAPIResponse.self, from: data)
         pageCount = response.info.pages
         results.append(contentsOf: response.results.map { return Character(webAPIResult: $0) })
