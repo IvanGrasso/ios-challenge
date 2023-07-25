@@ -61,9 +61,7 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         
         let resultsHandler: UIActionHandler = { [weak self] _ in
             self?.show(self?.resultViewController ?? UIViewController())
-            Task() {
-                await self?.presenter.didSelectResultList()
-            }
+            self?.presenter.didSelectResultList()
         }
         let resultsAction = UIAction(title: "Results",
                                      handler: resultsHandler)

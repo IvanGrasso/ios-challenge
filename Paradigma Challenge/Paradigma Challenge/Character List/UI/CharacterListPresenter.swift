@@ -10,7 +10,7 @@ import Foundation
 protocol CharacterListPresenting {
     var view: CharacterListView? { get set }
     func viewDidLoad() async
-    func didSelectResultList() async
+    func didSelectResultList()
     func didSelectFavoritesList() async
     func didScrollToLastResult() async
     func didSelect(_ item: Character)
@@ -50,14 +50,12 @@ final class CharacterListPresenter: CharacterListPresenting {
         await loadResults(forPage: resultsCurrentPage + 1)
     }
     
-    func didSelectResultList() async {
-        await MainActor.run {
-            if resultRepository.results.isEmpty {
-                view?.viewState = .loading
-            } else {
-                view?.viewState = .results(items: resultRepository.results,
-                                           isPagingEnabled: isPagingEnabled)
-            }
+    func didSelectResultList() {
+        if resultRepository.results.isEmpty {
+            view?.viewState = .loading
+        } else {
+            view?.viewState = .results(items: resultRepository.results,
+                                       isPagingEnabled: isPagingEnabled)
         }
     }
     
