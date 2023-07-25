@@ -52,8 +52,12 @@ final class CharacterListPresenter: CharacterListPresenting {
     
     func didSelectResultList() async {
         await MainActor.run {
-            view?.viewState = .results(items: resultRepository.results,
-                                       isPagingEnabled: isPagingEnabled)
+            if resultRepository.results.isEmpty {
+                view?.viewState = .loading
+            } else {
+                view?.viewState = .results(items: resultRepository.results,
+                                           isPagingEnabled: isPagingEnabled)
+            }
         }
     }
     

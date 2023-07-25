@@ -16,14 +16,13 @@ class ResultWebAPIRepository: ResultRepository {
     private(set) var pageCount = 0
     private(set) var results = [Character]()
     
+    // Disk cache is disabled for testing purposes.
+    private let urlSession = URLSession(configuration: URLSessionConfiguration.ephemeral)
+    
     func getResults(forPage page: Int) async throws {
         guard let url = URL(string: "\(ResultWebAPIConstants.baseURL)\(ResultWebAPIConstants.path)\(page)") else {
             throw ResultWebAPIRepositoryError.invalidURL
         }
-        
-        // Disable disk cache for testing purposes.
-        let urlSession = URLSession(configuration: URLSessionConfiguration.ephemeral)
-        
         let (data, _) = try await urlSession.data(from: url)
         let response = try JSONDecoder().decode(ResultWebAPIResponse.self, from: data)
         pageCount = response.info.pages
