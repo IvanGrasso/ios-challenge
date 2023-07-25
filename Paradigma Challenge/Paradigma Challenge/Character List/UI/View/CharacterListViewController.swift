@@ -9,16 +9,27 @@ import Foundation
 import UIKit
 
 protocol CharacterListView: AnyObject {
+    var viewState: CharacterListViewState { get set }
     func setUp(withListTitles titles: [String])
-    func updateResults(with items: [Character], isPagingEnabled: Bool)
-    func updateFavorites(with items: [Character])
     func navigateToDetailView(withTitle title: String, location: CharacterLocation?)
-    func showActivityIndicator()
-    func hideActivityIndicator()
     func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () async -> Void)
 }
 
+enum CharacterListViewState {
+    case loading
+    case results(items: [Character], isPagingEnabled: Bool)
+    case favorites(items: [Character])
+    case resultsError
+    case favoritesError
+}
+
 final class CharacterListViewController: UIViewController, CharacterListView {
+    
+    var viewState: CharacterListViewState = .loading {
+        didSet {
+            updateLayout()
+        }
+    }
     
     private var presenter: CharacterListPresenting
     
@@ -45,13 +56,8 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        addChild(resultViewController)
         resultViewController.delegate = self
-        
-        addChild(favoritesViewController)
         favoritesViewController.delegate = self
-        
         presenter.viewDidLoad()
     }
     
@@ -94,18 +100,30 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     
     private func show(_ viewController: UIViewController) {
         currentViewController?.view.removeFromSuperview()
+        currentViewController?.removeFromParent()
+        addChild(viewController)
         view.addSubview(viewController.view)
         viewController.view.pinToSuperview()
+        viewController.didMove(toParent: self)
         currentViewController = viewController
     }
     
-    func updateResults(with items: [Character], isPagingEnabled: Bool) {
-        resultViewController.items = items
-        resultViewController.showsActivityFooter = isPagingEnabled
-    }
-    
-    func updateFavorites(with items: [Character]) {
-        favoritesViewController.items = items
+    private func updateLayout() {
+        switch viewState {
+        case .loading:
+            showActivityIndicator()
+        case .results(let items, let isPagingEnabled):
+            hideActivityIndicator()
+            resultViewController.items = items
+            resultViewController.showsActivityFooter = isPagingEnabled
+        case .favorites(let items):
+            hideActivityIndicator()
+            favoritesViewController.items = items
+        case .resultsError:
+            break
+        case .favoritesError:
+            break
+        }
     }
     
     func navigateToDetailView(withTitle title: String, location: CharacterLocation?) {
@@ -115,7 +133,7 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         navigationController?.pushViewController(detailVC, animated: true)
     }
     
-    func showActivityIndicator() {
+    private func showActivityIndicator() {
         currentViewController?.view.isHidden = true
         view.addSubview(activityIndicator)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false

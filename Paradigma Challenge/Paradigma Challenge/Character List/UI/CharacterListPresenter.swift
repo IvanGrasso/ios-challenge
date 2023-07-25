@@ -48,19 +48,19 @@ final class CharacterListPresenter: CharacterListPresenting {
     func didSelectResultList() async {
         if resultsCurrentPage == 0 {
             await MainActor.run {
-                view?.showActivityIndicator()
+                view?.viewState = .loading
             }
             await loadResults(forPage: 1)
         } else {
             await MainActor.run {
-                view?.updateResults(with: resultRepository.results, isPagingEnabled: isPagingEnabled)
+                view?.viewState = .results(items: resultRepository.results, isPagingEnabled: isPagingEnabled)
             }
         }
     }
     
     func didSelectFavoritesList() async {
         await MainActor.run {
-            view?.showActivityIndicator()
+            view?.viewState = .loading
         }
         await loadFavorites()
     }
@@ -86,8 +86,7 @@ final class CharacterListPresenter: CharacterListPresenting {
             try await resultRepository.getResults(forPage: page)
             resultsCurrentPage += 1
             await MainActor.run {
-                view?.hideActivityIndicator()
-                view?.updateResults(with: resultRepository.results, isPagingEnabled: isPagingEnabled)
+                view?.viewState = .results(items: resultRepository.results, isPagingEnabled: isPagingEnabled)
             }
         } catch {
             await MainActor.run {
@@ -96,7 +95,7 @@ final class CharacterListPresenter: CharacterListPresenting {
                                 buttonTitle: "Retry",
                                 handler: { [weak self] in
                     guard let self = self else { return }
-                    self.view?.showActivityIndicator()
+                    self.view?.viewState = .loading
                     await self.loadResults(forPage: page)
                 })
             }
@@ -107,8 +106,7 @@ final class CharacterListPresenter: CharacterListPresenting {
         do {
             let favorites = try await favoritesRepository.getFavorites()
             await MainActor.run {
-                view?.hideActivityIndicator()
-                view?.updateFavorites(with: favorites)
+                view?.viewState = .favorites(items: favorites)
             }
         } catch {
             await MainActor.run {
@@ -117,7 +115,7 @@ final class CharacterListPresenter: CharacterListPresenting {
                                 buttonTitle: "Retry",
                                 handler: { [weak self] in
                     guard let self = self else { return }
-                    self.view?.showActivityIndicator()
+                    self.view?.viewState = .loading
                     Task.init {
                         await self.loadFavorites()
                     }
