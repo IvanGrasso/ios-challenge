@@ -10,13 +10,14 @@ import UIKit
 
 protocol CharacterListView: AnyObject {
     var viewState: CharacterListViewState { get set }
-    func navigateToDetailView(withTitle title: String, location: CharacterLocation?)
-    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () async -> Void)
+    func navigateToDetail(withTitle title: String,
+                          location: CharacterLocation?)
 }
 
 enum CharacterListViewState {
     case loading
-    case results(items: [Character], isPagingEnabled: Bool)
+    case results(items: [Character],
+                 isPagingEnabled: Bool)
     case favorites(items: [Character])
     case resultsError
     case favoritesError
@@ -64,8 +65,11 @@ final class CharacterListViewController: UIViewController, CharacterListView {
                 await self?.presenter.didSelectResultList()
             }
         }
-        let resultsAction = UIAction(title: "Results", handler: resultsHandler)
-        segmentedControl.insertSegment(action: resultsAction, at: 0, animated: false)
+        let resultsAction = UIAction(title: "Results",
+                                     handler: resultsHandler)
+        segmentedControl.insertSegment(action: resultsAction,
+                                       at: 0,
+                                       animated: false)
         
         let favoritesHandler: UIActionHandler = { [weak self] _ in
             self?.show(self?.favoritesViewController ?? UIViewController())
@@ -73,8 +77,11 @@ final class CharacterListViewController: UIViewController, CharacterListView {
                 await self?.presenter.didSelectFavoritesList()
             }
         }
-        let favoritesAction = UIAction(title: "Favorites", handler: favoritesHandler)
-        segmentedControl.insertSegment(action: favoritesAction, at: 1, animated: false)
+        let favoritesAction = UIAction(title: "Favorites",
+                                       handler: favoritesHandler)
+        segmentedControl.insertSegment(action: favoritesAction,
+                                       at: 1,
+                                       animated: false)
         
         navigationItem.titleView = segmentedControl
         segmentedControl.selectedSegmentIndex = 0
@@ -99,21 +106,38 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         switch viewState {
         case .loading:
             showActivityIndicator()
+            
         case .results(let items, let isPagingEnabled):
             hideActivityIndicator()
             resultViewController.items = items
             resultViewController.showsActivityFooter = isPagingEnabled
+            
         case .favorites(let items):
             hideActivityIndicator()
             favoritesViewController.items = items
+            
         case .resultsError:
-            break
+            hideActivityIndicator()
+            showAlert(withTitle: "Something's wrong",
+                      message: "There was an error loading your content.\nPlease try again.",
+                      buttonTitle: "OK",
+                      handler: { [weak self] in
+                await self?.presenter.didRetryLoadingResults()
+            })
+            
         case .favoritesError:
-            break
+            hideActivityIndicator()
+            showAlert(withTitle: "Something's wrong",
+                      message: "There was an error loading your favorites.",
+                      buttonTitle: "Retry",
+                      handler: { [weak self] in
+                await self?.presenter.didRetryLoadingFavorites()
+            })
         }
     }
     
-    func navigateToDetailView(withTitle title: String, location: CharacterLocation?) {
+    func navigateToDetail(withTitle title: String,
+                          location: CharacterLocation?) {
         let detailPresenter = CharacterLocationDetailPresenter(locationID: location?.id)
         let detailVC = CharacterLocationDetailViewController(presenter: detailPresenter)
         detailVC.title = title
@@ -135,7 +159,10 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         activityIndicator.removeFromSuperview()
     }
     
-    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () async -> Void) {
+    func showAlert(withTitle title: String,
+                   message: String,
+                   buttonTitle: String,
+                   handler: @escaping () async -> Void) {
         alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: buttonTitle, style: .default, handler: { [weak self] _ in
             Task() {

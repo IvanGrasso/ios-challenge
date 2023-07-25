@@ -16,6 +16,8 @@ protocol CharacterListPresenting {
     func didSelect(_ item: Character)
     func didMarkAsFavorite(_ item: Character) async
     func didUnmarkAsFavorite(_ item: Character) async
+    func didRetryLoadingResults() async
+    func didRetryLoadingFavorites() async
 }
 
 final class CharacterListPresenter: CharacterListPresenting {
@@ -47,7 +49,8 @@ final class CharacterListPresenter: CharacterListPresenting {
     
     func didSelectResultList() async {
         await MainActor.run {
-            view?.viewState = .results(items: resultRepository.results, isPagingEnabled: isPagingEnabled)
+            view?.viewState = .results(items: resultRepository.results,
+                                       isPagingEnabled: isPagingEnabled)
         }
     }
     
@@ -59,7 +62,8 @@ final class CharacterListPresenter: CharacterListPresenting {
     }
     
     func didSelect(_ item: Character) {
-        view?.navigateToDetailView(withTitle: "\(item.name)'s Last Location", location: item.location)
+        view?.navigateToDetail(withTitle: "\(item.name)'s Last Location",
+                               location: item.location)
     }
     
     func didMarkAsFavorite(_ item: Character) {
@@ -74,46 +78,43 @@ final class CharacterListPresenter: CharacterListPresenting {
         }
     }
     
+    func didRetryLoadingResults() async {
+        await loadResults(forPage: resultsCurrentPage)
+    }
+    
+    func didRetryLoadingFavorites() async {
+        await loadFavorites()
+    }
+    
     private func loadResults(forPage page: Int) async {
+        await MainActor.run {
+            view?.viewState = .loading
+        }
         do {
             try await resultRepository.getResults(forPage: page)
             resultsCurrentPage += 1
             await MainActor.run {
-                view?.viewState = .results(items: resultRepository.results, isPagingEnabled: isPagingEnabled)
+                view?.viewState = .results(items: resultRepository.results,
+                                           isPagingEnabled: isPagingEnabled)
             }
         } catch {
             await MainActor.run {
-                view?.showAlert(withTitle: "Something's wrong",
-                                message: "There was an error loading your content.",
-                                buttonTitle: "Retry",
-                                handler: { [weak self] in
-                    guard let self = self else { return }
-                    self.view?.viewState = .loading
-                    await self.loadResults(forPage: page)
-                })
+                view?.viewState = .resultsError
             }
         }
     }
     
     private func loadFavorites() async {
+        await MainActor.run {
+            view?.viewState = .loading
+        }
         do {
             let favorites = try await favoritesRepository.getFavorites()
             await MainActor.run {
                 view?.viewState = .favorites(items: favorites)
             }
         } catch {
-            await MainActor.run {
-                view?.showAlert(withTitle: "Something's wrong",
-                                message: "There was an error loading your favorites.",
-                                buttonTitle: "Retry",
-                                handler: { [weak self] in
-                    guard let self = self else { return }
-                    self.view?.viewState = .loading
-                    Task.init {
-                        await self.loadFavorites()
-                    }
-                })
-            }
+            view?.viewState = .favoritesError
         }
     }
 }
