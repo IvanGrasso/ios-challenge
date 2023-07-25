@@ -122,7 +122,9 @@ final class CharacterListViewController: UIViewController, CharacterListView {
                       message: "There was an error loading your content.\nPlease try again.",
                       buttonTitle: "OK",
                       handler: { [weak self] in
-                await self?.presenter.didRetryLoadingResults()
+                Task() {
+                    await self?.presenter.didRetryLoadingResults()
+                }
             })
             
         case .favoritesError:
@@ -131,7 +133,9 @@ final class CharacterListViewController: UIViewController, CharacterListView {
                       message: "There was an error loading your favorites.",
                       buttonTitle: "Retry",
                       handler: { [weak self] in
-                await self?.presenter.didRetryLoadingFavorites()
+                Task() {
+                    await self?.presenter.didRetryLoadingFavorites()
+                }
             })
         }
     }
@@ -162,12 +166,10 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     func showAlert(withTitle title: String,
                    message: String,
                    buttonTitle: String,
-                   handler: @escaping () async -> Void) {
+                   handler: @escaping () -> Void) {
         alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: buttonTitle, style: .default, handler: { [weak self] _ in
-            Task() {
-                await handler()
-            }
+            handler()
             self?.alertController.dismiss(animated: true)
         })
         alertController.addAction(action)
