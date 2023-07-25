@@ -15,7 +15,7 @@ protocol CharacterListView: AnyObject {
     func navigateToDetailView(withTitle title: String, location: CharacterLocation?)
     func showActivityIndicator()
     func hideActivityIndicator()
-    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () -> Void)
+    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () async -> Void)
 }
 
 final class CharacterListViewController: UIViewController, CharacterListView {
@@ -130,10 +130,12 @@ final class CharacterListViewController: UIViewController, CharacterListView {
         activityIndicator.removeFromSuperview()
     }
     
-    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () -> Void) {
+    func showAlert(withTitle title: String, message: String, buttonTitle: String, handler: @escaping () async -> Void) {
         alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: buttonTitle, style: .default, handler: { [weak self] _ in
-            handler()
+            Task() {
+                await handler()
+            }
             self?.alertController.dismiss(animated: true)
         })
         alertController.addAction(action)

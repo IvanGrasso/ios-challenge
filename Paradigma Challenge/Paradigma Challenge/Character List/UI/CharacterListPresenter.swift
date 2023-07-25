@@ -58,11 +58,11 @@ final class CharacterListPresenter: CharacterListPresenting {
         }
     }
     
-    func didSelectFavoritesList() {
-        view?.showActivityIndicator()
-        Task.init {
-            await loadFavorites()
+    func didSelectFavoritesList() async {
+        await MainActor.run {
+            view?.showActivityIndicator()
         }
+        await loadFavorites()
     }
     
     func didSelect(_ item: Character) {
@@ -97,9 +97,7 @@ final class CharacterListPresenter: CharacterListPresenting {
                                 handler: { [weak self] in
                     guard let self = self else { return }
                     self.view?.showActivityIndicator()
-                    Task.init {
-                        await self.loadResults(forPage: page)
-                    }
+                    await self.loadResults(forPage: page)
                 })
             }
         }
