@@ -16,7 +16,7 @@ class ResultWebAPIRepository: ResultRepository {
     private(set) var pageCount = 0
     private(set) var results = [Character]()
     
-    // Disk cache is disabled for testing purposes.
+    // URLSession cache is disabled for testing purposes.
     private let urlSession = URLSession(configuration: URLSessionConfiguration.ephemeral)
     
     func getResults(forPage page: Int) async throws {

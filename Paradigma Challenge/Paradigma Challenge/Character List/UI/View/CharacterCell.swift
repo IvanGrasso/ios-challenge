@@ -36,7 +36,6 @@ final class CharacterCell: UITableViewCell {
         imageView.layer.cornerRadius = 4
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "image-placeholder")
         return imageView
     }()
     
@@ -79,8 +78,8 @@ final class CharacterCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        portraitImageView.image = UIImage(named: "image-placeholder")
         imageTask?.cancel()
+        portraitImageView.image = nil
     }
     
     private func setUpLayout() {
@@ -105,6 +104,7 @@ final class CharacterCell: UITableViewCell {
     
     func configure(with character: Character, imageCache: ImageCache) {
         titleLabel.text = character.name
+        portraitImageView.image = UIImage(named: "image-placeholder")
         
         let statusIndicator = character.status == "Alive" ? "🟢" : "🔴"
         let subtitle = "\(statusIndicator) \(character.status) - \(character.species)"
