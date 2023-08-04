@@ -29,7 +29,7 @@ final class ImageService {
         func cancel() { }
     }
     
-    private let cache = NSCache<NSURL, NSData>()
+    private var cache: [CachedImage] = []
     
     // URLSession cache is disabled for testing purposes.
     private let urlSession = URLSession(configuration: URLSessionConfiguration.ephemeral)
