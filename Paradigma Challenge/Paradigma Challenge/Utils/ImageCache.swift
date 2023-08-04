@@ -1,5 +1,5 @@
 //
-//  ImageCache.swift
+//  ImageService.swift
 //  Paradigma Challenge
 //
 //  Created by Ivan Grasso on 7/7/23.
@@ -14,11 +14,11 @@ protocol Cancellable {
 
 extension URLSessionDataTask: Cancellable { }
 
-enum ImageCacheError: Error {
+enum imageServiceError: Error {
     case invalidURL
 }
 
-final class ImageCache {
+final class ImageService {
     
     private struct CachedImage {
         let url: URL
@@ -29,14 +29,14 @@ final class ImageCache {
         func cancel() { }
     }
     
-    private var cache: [CachedImage] = []
+    private let cache = NSCache<NSURL, NSData>()
     
     // URLSession cache is disabled for testing purposes.
     private let urlSession = URLSession(configuration: URLSessionConfiguration.ephemeral)
     private let queue = DispatchQueue(label: "image-cache-queue", attributes: .concurrent)
     
-    func loadImage(withURL urlString: String, completion: @escaping (UIImage?) -> Void) throws -> Cancellable {
-        guard let url = URL(string: urlString) else { throw ImageCacheError.invalidURL }
+    func image(forURL urlString: String, completion: @escaping (UIImage?) -> Void) throws -> Cancellable {
+        guard let url = URL(string: urlString) else { throw imageServiceError.invalidURL }
         
         if let image = cachedImage(for: url) {
             completion(image)

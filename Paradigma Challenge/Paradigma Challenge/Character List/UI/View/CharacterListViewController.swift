@@ -34,17 +34,17 @@ final class CharacterListViewController: UIViewController, CharacterListView {
     private var presenter: CharacterListPresenting
     
     private let segmentedControl = UISegmentedControl()
-    private let imageCache: ImageCache
-    private lazy var resultViewController = ResultTableViewController(imageCache: imageCache)
-    private lazy var favoritesViewController = FavoritesCollectionViewController(imageCache: imageCache)
+    private let imageService: ImageService
+    private lazy var resultViewController = ResultTableViewController(imageService: imageService)
+    private lazy var favoritesViewController = FavoritesCollectionViewController(imageService: imageService)
     private lazy var activityIndicator = UIActivityIndicatorView(style: .large)
     private var currentViewController: UIViewController?
     private var alertController = UIAlertController()
     
     init(presenter: CharacterListPresenting = CharacterListPresenter(),
-         imageCache: ImageCache = ImageCache()) {
+         imageService: ImageService = ImageService()) {
         self.presenter = presenter
-        self.imageCache = imageCache
+        self.imageService = imageService
         super.init(nibName: nil, bundle: nil)
         self.presenter.view = self
     }

@@ -28,7 +28,7 @@ final class CharacterCell: UITableViewCell {
         return stack
     }()
     
-    private var portraitImageView: UIImageView = {
+    private var thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.widthAnchor.constraint(equalToConstant: 95).isActive = true
@@ -79,7 +79,7 @@ final class CharacterCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageTask?.cancel()
-        portraitImageView.image = nil
+        thumbnailImageView.image = nil
     }
     
     private func setUpLayout() {
@@ -92,7 +92,7 @@ final class CharacterCell: UITableViewCell {
         bottomConstraint.isActive = true
         bottomConstraint.priority = .defaultHigh
         
-        mainStackView.addArrangedSubview(portraitImageView)
+        mainStackView.addArrangedSubview(thumbnailImageView)
         
         mainStackView.addArrangedSubview(labelStackView)
         labelStackView.addArrangedSubview(titleLabel)
@@ -102,9 +102,9 @@ final class CharacterCell: UITableViewCell {
         labelStackView.addArrangedSubview(originLabel)
     }
     
-    func configure(with character: Character, imageCache: ImageCache) {
+    func configure(with character: Character, imageService: ImageService) {
         titleLabel.text = character.name
-        portraitImageView.image = UIImage(named: "image-placeholder")
+        thumbnailImageView.image = UIImage(named: "image-placeholder")
         
         let statusIndicator = character.status == "Alive" ? "🟢" : "🔴"
         let subtitle = "\(statusIndicator) \(character.status) - \(character.species)"
@@ -112,8 +112,8 @@ final class CharacterCell: UITableViewCell {
         
         originTitleLabel.text = "First seen in:"
         originLabel.text = "\(character.origin?.name ?? "Unknown")"
-        imageTask = try? imageCache.loadImage(withURL: character.image) { [weak self] image in
-            self?.portraitImageView.image = image
+        imageTask = try? imageService.image(forURL: character.image) { [weak self] image in
+            self?.thumbnailImageView.image = image
         }
     }
 }

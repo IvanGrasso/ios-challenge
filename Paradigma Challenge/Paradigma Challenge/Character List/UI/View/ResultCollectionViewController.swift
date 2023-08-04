@@ -37,10 +37,10 @@ class ResultTableViewController: UITableViewController {
         return spinner
     }()
     
-    private let imageCache: ImageCache
+    private let imageService: ImageService
     
-    init(imageCache: ImageCache = ImageCache()) {
-        self.imageCache = imageCache
+    init(imageService: ImageService = ImageService()) {
+        self.imageService = imageService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,7 +65,7 @@ class ResultTableViewController: UITableViewController {
             return UITableViewCell()
         }
         let character = items[indexPath.row]
-        cell.configure(with: character, imageCache: imageCache)
+        cell.configure(with: character, imageService: imageService)
         return cell
     }
     
